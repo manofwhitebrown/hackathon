@@ -204,11 +204,69 @@ html, body {
   color: var(--risk-high);
 }
 
+.how-it-works {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.how-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.how-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.how-text {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.how-arrow {
+  color: var(--line);
+  font-size: 0.9rem;
+}
+
+.risk-marker {
+  font-size: 0.7rem;
+  margin-right: 0.15rem;
+}
+
 .results {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   margin-top: 2.5rem;
+  animation: fadeIn 0.35s ease;
+}
+.results:focus {
+  outline: none; /* focus is for assistive tech / keyboard users landing here, not a visual box */
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .how-it-works { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .how-arrow { display: none; }
 }
 
 .result-header {
