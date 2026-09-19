@@ -20,6 +20,8 @@ const anotherButton = document.getElementById('another-button');
 // the request fail silently on the server.
 const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4MB, leaves headroom for base64 overhead
 
+const languageSelect = document.getElementById('language-select');
+
 let selectedFile = null;
 
 // ---- Sample document (demo safety net) ----
@@ -115,7 +117,8 @@ decodeButton.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         data: base64Data,
-        mimeType: selectedFile.type || 'application/pdf'
+        mimeType: selectedFile.type || 'application/pdf',
+        language: languageSelect.value
       })
     });
 
