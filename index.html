@@ -20,6 +20,23 @@
 
   <main class="page">
 
+    <section class="how-it-works" aria-label="How it works">
+      <div class="how-step">
+        <span class="how-number">1</span>
+        <span class="how-text">Upload a document</span>
+      </div>
+      <div class="how-arrow" aria-hidden="true">→</div>
+      <div class="how-step">
+        <span class="how-number">2</span>
+        <span class="how-text">AI reads it</span>
+      </div>
+      <div class="how-arrow" aria-hidden="true">→</div>
+      <div class="how-step">
+        <span class="how-number">3</span>
+        <span class="how-text">Get it in plain English</span>
+      </div>
+    </section>
+
     <section id="upload-section" class="panel">
       <label for="file-input" class="dropzone" id="dropzone">
         <div class="dropzone-icon" aria-hidden="true">
@@ -45,17 +62,17 @@
       <p class="privacy-note">Nothing is saved. Your document is read once, analyzed, and discarded.</p>
     </section>
 
-    <section id="status-section" class="status" hidden>
+    <section id="status-section" class="status" hidden aria-live="polite">
       <div class="spinner" aria-hidden="true"></div>
       <p id="status-text">Reading your document…</p>
     </section>
 
-    <section id="error-section" class="error-panel" hidden>
+    <section id="error-section" class="error-panel" hidden aria-live="assertive">
       <p id="error-text"></p>
       <button type="button" id="retry-button" class="text-button">Try again</button>
     </section>
 
-    <section id="results-section" class="results" hidden>
+    <section id="results-section" class="results" hidden tabindex="-1" aria-live="polite">
 
       <div class="result-header">
         <span id="doc-type-badge" class="doc-type-badge"></span>
