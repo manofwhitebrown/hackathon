@@ -36,10 +36,20 @@ html, body {
 .masthead {
   border-bottom: 1px solid var(--line);
   padding: 2rem 1.5rem 1.75rem;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--paper) 60%);
 }
 .masthead-inner {
   max-width: 640px;
   margin: 0 auto;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.brand-mark {
+  color: var(--accent);
+  flex-shrink: 0;
 }
 .wordmark {
   font-family: var(--serif);
@@ -76,12 +86,14 @@ html, body {
   padding: 2.75rem 1.5rem;
   cursor: pointer;
   background: #fff;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 3px rgba(28, 35, 51, 0.04);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 .dropzone:hover,
 .dropzone:focus-within {
   border-color: var(--accent);
   background: var(--accent-soft);
+  box-shadow: 0 2px 8px rgba(15, 110, 99, 0.1);
 }
 .dropzone-icon {
   color: var(--accent);
@@ -94,6 +106,32 @@ html, body {
 .dropzone-hint {
   color: var(--ink-soft);
   font-size: 0.9rem;
+}
+
+.language-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+}
+.language-row label {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.language-row select {
+  flex: 1;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.language-row select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .file-chosen {
@@ -281,6 +319,14 @@ html, body {
   border-radius: 20px;
 }
 
+.result-block {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.25rem 1.4rem 1.4rem;
+  box-shadow: 0 1px 3px rgba(28, 35, 51, 0.04);
+}
+
 .result-block h2 {
   font-family: var(--serif);
   font-size: 1.3rem;
@@ -288,6 +334,13 @@ html, body {
   margin: 0 0 0.75rem;
   padding-bottom: 0.6rem;
   border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.block-icon {
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
 #summary-text {
