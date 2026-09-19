@@ -13,7 +13,13 @@
 
   <header class="masthead">
     <div class="masthead-inner">
-      <span class="wordmark">Plain Terms</span>
+      <div class="brand">
+        <svg class="brand-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="5" y="3" width="20" height="24" rx="2.5" stroke="currentColor" stroke-width="2"/>
+          <path d="M10 10H20M10 15H20M10 20H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="wordmark">Plain Terms</span>
+      </div>
       <p class="tagline">Upload a confusing document. Get it explained in plain English.</p>
     </div>
   </header>
@@ -50,9 +56,20 @@
         <input type="file" id="file-input" accept="image/*,application/pdf" hidden>
       </label>
 
-      <div id="file-chosen" class="file-chosen" hidden>
+      <div class="file-chosen" id="file-chosen" hidden>
         <span id="file-name"></span>
         <button type="button" id="clear-file" class="text-button">Remove</button>
+      </div>
+
+      <div class="language-row">
+        <label for="language-select">Explain it in</label>
+        <select id="language-select">
+          <option value="Simple English" selected>English (simple words)</option>
+          <option value="Hindi">हिन्दी (Hindi)</option>
+          <option value="Telugu">తెలుగు (Telugu)</option>
+          <option value="Tamil">தமிழ் (Tamil)</option>
+          <option value="Spanish">Español (Spanish)</option>
+        </select>
       </div>
 
       <button type="button" id="decode-button" class="primary-button" disabled>Decode this document</button>
@@ -79,22 +96,22 @@
       </div>
 
       <article class="result-block">
-        <h2>What this document says</h2>
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 2h7l3 3v11H4V2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 8h5M6.5 11h5M6.5 5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>What this document says</h2>
         <p id="summary-text"></p>
       </article>
 
       <article class="result-block" id="risk-block">
-        <h2>Worth paying attention to</h2>
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 2L16.5 15H1.5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7.5V10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="13" r="0.9" fill="currentColor"/></svg>Worth paying attention to</h2>
         <ul id="risk-list" class="risk-list"></ul>
       </article>
 
       <article class="result-block" id="glossary-block">
-        <h2>Terms explained</h2>
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 3.5C3 2.7 3.7 2 4.5 2H14v13H4.5c-.8 0-1.5.7-1.5 1.5V3.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 6.5H11M6 9.5H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Terms explained</h2>
         <dl id="glossary-list" class="glossary-list"></dl>
       </article>
 
       <article class="result-block" id="questions-block">
-        <h2>Questions worth asking</h2>
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6.8 6.9c.2-1 1.1-1.7 2.2-1.7 1.2 0 2.2.9 2.2 2 0 1.6-2.1 1.6-2.1 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="12.7" r="0.9" fill="currentColor"/></svg>Questions worth asking</h2>
         <ul id="questions-list" class="questions-list"></ul>
       </article>
 
