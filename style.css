@@ -17,6 +17,13 @@
 
 * { box-sizing: border-box; }
 
+/* This is the fix: without it, sections like .status and .error-panel
+   set their own "display: flex" below, which was silently overriding
+   the hidden attribute and causing spinner/error/results to overlap. */
+[hidden] {
+  display: none !important;
+}
+
 html, body {
   margin: 0;
   padding: 0;
