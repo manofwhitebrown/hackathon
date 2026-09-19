@@ -2,6 +2,8 @@
 // It's the only place that ever touches your Gemini API key,
 // so the key is never visible to anyone using the site.
 
+import mammoth from 'mammoth';
+
 const GEMINI_MODEL = 'gemini-3.6-flash';
 
 const BASE_PROMPT = `You are helping an ordinary person understand a confusing real-world document
@@ -85,13 +87,39 @@ export default async function handler(req, res) {
     });
   }
 
+  const isWordDoc = mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const isPlainText = mimeType === 'text/plain';
+
+  let documentPart;
+
+  if (isWordDoc) {
+    // Gemini can't read .docx binary directly - pull the plain text out first.
+    try {
+      const buffer = Buffer.from(data, 'base64');
+      const { value: extractedText } = await mammoth.extractRawText({ buffer });
+      if (!extractedText || !extractedText.trim()) {
+        return res.status(400).json({ error: 'This Word document appears to be empty, or is mostly images/tables we could not read. Try a PDF or photo instead.' });
+      }
+      documentPart = { text: `Document content:\n\n${extractedText}` };
+    } catch (err) {
+      console.error('mammoth extraction failed', err);
+      return res.status(400).json({ error: 'Could not read this Word document. Make sure it is a .docx file (not the older .doc format), then try again.' });
+    }
+  } else if (isPlainText) {
+    const text = Buffer.from(data, 'base64').toString('utf-8');
+    documentPart = { text: `Document content:\n\n${text}` };
+  } else {
+    // Images and PDFs go to Gemini as-is - it reads them directly.
+    documentPart = { inline_data: { mime_type: mimeType, data: data } };
+  }
+
   const requestBody = JSON.stringify({
     contents: [
       {
         role: 'user',
         parts: [
           { text: PROMPT },
-          { inline_data: { mime_type: mimeType, data: data } }
+          documentPart
         ]
       }
     ],
