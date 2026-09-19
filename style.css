@@ -1,0 +1,314 @@
+:root {
+  --paper: #FAF9F6;
+  --ink: #1C2333;
+  --ink-soft: #4A5164;
+  --line: #DEDBD3;
+  --accent: #0F6E63;
+  --accent-soft: #E4F0EE;
+  --risk-high: #B3261E;
+  --risk-high-bg: #FBEAE9;
+  --risk-medium: #92620A;
+  --risk-medium-bg: #FBF0DD;
+  --risk-low: #2F6B4F;
+  --risk-low-bg: #E9F3ED;
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.55;
+}
+
+.masthead {
+  border-bottom: 1px solid var(--line);
+  padding: 2rem 1.5rem 1.75rem;
+}
+.masthead-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.wordmark {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.tagline {
+  margin: 0.4rem 0 0;
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  border: 1.5px dashed var(--line);
+  border-radius: 10px;
+  padding: 2.75rem 1.5rem;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.dropzone:hover,
+.dropzone:focus-within {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.dropzone-icon {
+  color: var(--accent);
+  margin-bottom: 0.2rem;
+}
+.dropzone-title {
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+.dropzone-hint {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.file-chosen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.primary-button {
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9rem 1.5rem;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.primary-button:hover:not(:disabled) {
+  background: var(--accent);
+}
+.primary-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.dropzone:focus-visible,
+.text-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.secondary-button {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.85rem 1.5rem;
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.secondary-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.privacy-note {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 0;
+  color: var(--ink-soft);
+}
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-panel {
+  background: var(--risk-high-bg);
+  border: 1px solid var(--risk-high);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.error-panel p {
+  margin: 0;
+  color: var(--risk-high);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+.result-header {
+  display: flex;
+}
+.doc-type-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+}
+
+.result-block h2 {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+
+#summary-text {
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.risk-list, .questions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.risk-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  border-left: 3px solid var(--line);
+}
+.risk-item.high { background: var(--risk-high-bg); border-left-color: var(--risk-high); }
+.risk-item.medium { background: var(--risk-medium-bg); border-left-color: var(--risk-medium); }
+.risk-item.low { background: var(--risk-low-bg); border-left-color: var(--risk-low); }
+
+.risk-label {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+  white-space: nowrap;
+  padding-top: 0.15rem;
+}
+.risk-item.high .risk-label { color: var(--risk-high); }
+.risk-item.medium .risk-label { color: var(--risk-medium); }
+.risk-item.low .risk-label { color: var(--risk-low); }
+
+.risk-body strong {
+  display: block;
+  font-size: 0.98rem;
+  margin-bottom: 0.2rem;
+}
+.risk-body span {
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+}
+
+.glossary-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.glossary-list dt {
+  font-weight: 600;
+  font-family: var(--serif);
+  font-size: 1rem;
+}
+.glossary-list dd {
+  margin: 0.15rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.questions-list li {
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.97rem;
+}
+
+.site-footer {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+.site-footer p {
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+}
+
+@media (max-width: 480px) {
+  .dropzone { padding: 2rem 1rem; }
+  .risk-item { flex-direction: column; gap: 0.3rem; }
+}

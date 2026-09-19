@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plain Terms — decode confusing documents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <span class="wordmark">Plain Terms</span>
+      <p class="tagline">Upload a confusing document. Get it explained in plain English.</p>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <section id="upload-section" class="panel">
+      <label for="file-input" class="dropzone" id="dropzone">
+        <div class="dropzone-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 26V6M20 6L13 13M20 6L27 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 26V31C6 32.6569 7.34315 34 9 34H31C32.6569 34 34 32.6569 34 31V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="dropzone-title">Drop a document here, or choose a file</span>
+        <span class="dropzone-hint">Photo, scan, or PDF — medical results, contracts, insurance letters, bills</span>
+        <input type="file" id="file-input" accept="image/*,application/pdf" hidden>
+      </label>
+
+      <div id="file-chosen" class="file-chosen" hidden>
+        <span id="file-name"></span>
+        <button type="button" id="clear-file" class="text-button">Remove</button>
+      </div>
+
+      <button type="button" id="decode-button" class="primary-button" disabled>Decode this document</button>
+
+      <button type="button" id="sample-button" class="text-button">Or try a sample document instead →</button>
+
+      <p class="privacy-note">Nothing is saved. Your document is read once, analyzed, and discarded.</p>
+    </section>
+
+    <section id="status-section" class="status" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="status-text">Reading your document…</p>
+    </section>
+
+    <section id="error-section" class="error-panel" hidden>
+      <p id="error-text"></p>
+      <button type="button" id="retry-button" class="text-button">Try again</button>
+    </section>
+
+    <section id="results-section" class="results" hidden>
+
+      <div class="result-header">
+        <span id="doc-type-badge" class="doc-type-badge"></span>
+      </div>
+
+      <article class="result-block">
+        <h2>What this document says</h2>
+        <p id="summary-text"></p>
+      </article>
+
+      <article class="result-block" id="risk-block">
+        <h2>Worth paying attention to</h2>
+        <ul id="risk-list" class="risk-list"></ul>
+      </article>
+
+      <article class="result-block" id="glossary-block">
+        <h2>Terms explained</h2>
+        <dl id="glossary-list" class="glossary-list"></dl>
+      </article>
+
+      <article class="result-block" id="questions-block">
+        <h2>Questions worth asking</h2>
+        <ul id="questions-list" class="questions-list"></ul>
+      </article>
+
+      <button type="button" id="another-button" class="secondary-button">Decode another document</button>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Plain Terms reads documents with AI and may make mistakes. It does not replace advice from a doctor, lawyer, or financial professional.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
