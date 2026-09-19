@@ -4,7 +4,7 @@
 
 import mammoth from 'mammoth';
 
-const CLAUDE_MODEL = 'Claude Sonnet 4.5';
+const GEMINI_MODEL = 'gemini-3.6-flash';
 
 const BASE_PROMPT = `You are helping an ordinary person understand a confusing real-world document
 (this could be a medical result, a legal contract, an insurance letter, or a bill).
