@@ -162,6 +162,7 @@ function showResults() {
   errorSection.hidden = true;
   uploadSection.hidden = true;
   resultsSection.hidden = false;
+  resultsSection.focus(); // so keyboard and screen-reader users land here, not stuck at the old upload button
 }
 
 retryButton.addEventListener('click', () => {
@@ -191,8 +192,9 @@ function renderResults(data) {
     data.riskFlags.forEach((risk) => {
       const li = document.createElement('li');
       li.className = `risk-item ${risk.severity || 'low'}`;
+      const marker = risk.severity === 'high' ? '●' : risk.severity === 'medium' ? '◐' : '○';
       li.innerHTML = `
-        <span class="risk-label">${risk.severity || ''}</span>
+        <span class="risk-label"><span class="risk-marker" aria-hidden="true">${marker}</span> ${risk.severity || ''}</span>
         <span class="risk-body"><strong>${escapeHtml(risk.issue)}</strong><span>${escapeHtml(risk.explanation)}</span></span>
       `;
       riskList.appendChild(li);
