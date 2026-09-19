@@ -2,7 +2,7 @@
 // It's the only place that ever touches your Gemini API key,
 // so the key is never visible to anyone using the site.
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-3.6-flash';
 
 const PROMPT = `You are helping an ordinary person understand a confusing real-world document
 (this could be a medical result, a legal contract, an insurance letter, or a bill).
