@@ -18,13 +18,24 @@ friend or family member with no background in the subject:
 - Avoid long or compound sentences. One idea per sentence where possible.
 
 Read the attached document and respond with:
-1. documentType: a short label for what kind of document this is (e.g. "Medical result", "Insurance letter", "Legal contract", "Bill").
-2. summary: 3-5 plain, simple sentences explaining what this document actually says.
-3. glossary: a list of the confusing or technical terms that actually appear in THIS document, each with a one-sentence simple definition. Only include terms that appear in the document. If there are none, return an empty list.
-4. riskFlags: things in the document worth paying attention to - unusual clauses, concerning results, hidden fees, deadlines, anything that could cost the person money, health, or legal standing if missed. For each one, give a severity ("high", "medium", or "low"), a short issue title, and a one-sentence explanation of why it matters. If there is nothing concerning, return an empty list - do not invent risks.
-5. questionsToAsk: 3-6 specific, smart questions the person could ask their doctor, lawyer, insurer, or the sender of the bill, based on THIS specific document.
 
-Be accurate and conservative. Do not diagnose medical conditions or give legal advice - only explain what the document says and flag what's worth asking about.`;
+1. documentType: a short label for what kind of document this is (e.g. "Medical result", "Insurance letter", "Legal contract", "Bill").
+
+2. summary: 3-5 plain, simple sentences explaining what this document actually says.
+
+3. glossary: the confusing or technical terms that actually appear in THIS document. For each: term, a one-sentence simple definition, and moreDetail (2-3 sentences going a bit deeper, for someone who wants more than the one-liner). Only include terms that appear in the document. Empty list if none.
+
+4. riskFlags: things worth paying attention to - unusual clauses, concerning results, hidden fees, deadlines, anything that could cost money, health, or legal standing if missed. For each: severity ("high"/"medium"/"low"), issue (short title), explanation (why it matters and what the impact could be), whatToCheck (one concrete thing the person should verify or do about it), and certainty ("stated" if this is explicitly written in the document, "interpretation" if you are inferring or reading between the lines). Do not invent risks. Empty list if none.
+
+5. actionItems: 2-5 concrete, specific actions the person should take because of this document (e.g. "Pay $110 by September 30" or "Call your insurer to confirm this claim number"). These are things to DO, distinct from questions to ask.
+
+6. importantDatesAndMoney: every deadline, payment amount, fee, deductible, or renewal date that appears in the document. For each: label (what it is), value (the date or amount, exactly as it would be said aloud), and note (one short sentence of context). Empty list if genuinely none appear.
+
+7. questionsToAsk: 3-6 specific, smart questions based on THIS document. For each: question, and askWho - who the person should ask: "Doctor", "Lawyer", "Insurer", "Biller", or "Other".
+
+8. beforeAfter: 2-4 examples pairing a short confusing phrase or sentence actually taken from the document (original) with its plain-language explanation (plain). Pick the most jargon-heavy or important phrases. This is different from the glossary - use short phrases or sentences, not single terms.
+
+Be accurate and conservative. Do not diagnose medical conditions or give legal advice - only explain what the document says and flag what's worth asking about. Never invent information that is not in the document.`;
 
 const RESPONSE_SCHEMA = {
   type: 'OBJECT',
@@ -37,9 +48,10 @@ const RESPONSE_SCHEMA = {
         type: 'OBJECT',
         properties: {
           term: { type: 'STRING' },
-          definition: { type: 'STRING' }
+          definition: { type: 'STRING' },
+          moreDetail: { type: 'STRING' }
         },
-        required: ['term', 'definition']
+        required: ['term', 'definition', 'moreDetail']
       }
     },
     riskFlags: {
@@ -49,17 +61,53 @@ const RESPONSE_SCHEMA = {
         properties: {
           severity: { type: 'STRING', enum: ['high', 'medium', 'low'] },
           issue: { type: 'STRING' },
-          explanation: { type: 'STRING' }
+          explanation: { type: 'STRING' },
+          whatToCheck: { type: 'STRING' },
+          certainty: { type: 'STRING', enum: ['stated', 'interpretation'] }
         },
-        required: ['severity', 'issue', 'explanation']
+        required: ['severity', 'issue', 'explanation', 'whatToCheck', 'certainty']
+      }
+    },
+    actionItems: {
+      type: 'ARRAY',
+      items: { type: 'STRING' }
+    },
+    importantDatesAndMoney: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          label: { type: 'STRING' },
+          value: { type: 'STRING' },
+          note: { type: 'STRING' }
+        },
+        required: ['label', 'value', 'note']
       }
     },
     questionsToAsk: {
       type: 'ARRAY',
-      items: { type: 'STRING' }
+      items: {
+        type: 'OBJECT',
+        properties: {
+          question: { type: 'STRING' },
+          askWho: { type: 'STRING', enum: ['Doctor', 'Lawyer', 'Insurer', 'Biller', 'Other'] }
+        },
+        required: ['question', 'askWho']
+      }
+    },
+    beforeAfter: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          original: { type: 'STRING' },
+          plain: { type: 'STRING' }
+        },
+        required: ['original', 'plain']
+      }
     }
   },
-  required: ['documentType', 'summary', 'glossary', 'riskFlags', 'questionsToAsk']
+  required: ['documentType', 'summary', 'glossary', 'riskFlags', 'actionItems', 'importantDatesAndMoney', 'questionsToAsk', 'beforeAfter']
 };
 
 export default async function handler(req, res) {
