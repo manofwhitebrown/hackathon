@@ -1,12 +1,24 @@
+// This file runs on Vercel's servers, not in the browser.
+// It's the only place that ever touches your Gemini API key,
+// so the key is never visible to anyone using the site.
+
 const GEMINI_MODEL = 'gemini-3.6-flash';
 
-const PROMPT = `You are helping an ordinary person understand a confusing real-world document
+const BASE_PROMPT = `You are helping an ordinary person understand a confusing real-world document
 (this could be a medical result, a legal contract, an insurance letter, or a bill).
+
+The person you are writing for may have limited formal education and may not be familiar with
+technical, legal, medical, or financial vocabulary. Write as if explaining it out loud to a
+friend or family member with no background in the subject:
+- Use short sentences.
+- Use everyday, common words instead of technical or formal ones wherever possible.
+- If a technical term truly cannot be avoided, explain it in the simplest possible way the moment you use it.
+- Avoid long or compound sentences. One idea per sentence where possible.
 
 Read the attached document and respond with:
 1. documentType: a short label for what kind of document this is (e.g. "Medical result", "Insurance letter", "Legal contract", "Bill").
-2. summary: 3-5 plain-English sentences explaining what this document actually says, written for someone with no background in the subject. No jargon.
-3. glossary: a list of the confusing or technical terms that actually appear in THIS document, each with a one-sentence plain-English definition. Only include terms that appear in the document. If there are none, return an empty list.
+2. summary: 3-5 plain, simple sentences explaining what this document actually says.
+3. glossary: a list of the confusing or technical terms that actually appear in THIS document, each with a one-sentence simple definition. Only include terms that appear in the document. If there are none, return an empty list.
 4. riskFlags: things in the document worth paying attention to - unusual clauses, concerning results, hidden fees, deadlines, anything that could cost the person money, health, or legal standing if missed. For each one, give a severity ("high", "medium", or "low"), a short issue title, and a one-sentence explanation of why it matters. If there is nothing concerning, return an empty list - do not invent risks.
 5. questionsToAsk: 3-6 specific, smart questions the person could ask their doctor, lawyer, insurer, or the sender of the bill, based on THIS specific document.
 
@@ -53,11 +65,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { data, mimeType } = req.body || {};
+  const { data, mimeType, language } = req.body || {};
 
   if (!data || !mimeType) {
     return res.status(400).json({ error: 'No document was received.' });
   }
+
+  const outputLanguage = language && language !== 'Simple English' ? language : 'English';
+  const PROMPT = outputLanguage === 'English'
+    ? BASE_PROMPT
+    : `${BASE_PROMPT}\n\nWrite your entire response (every field, including documentType, summary, glossary terms and definitions, risk flags, and questions) in ${outputLanguage}. Keep the same simple, everyday style described above, in ${outputLanguage} rather than English.`;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
