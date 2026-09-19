@@ -1,7 +1,3 @@
-// This file runs on Vercel's servers, not in the browser.
-// It's the only place that ever touches your Gemini API key,
-// so the key is never visible to anyone using the site.
-
 const GEMINI_MODEL = 'gemini-3.6-flash';
 
 const PROMPT = `You are helping an ordinary person understand a confusing real-world document
@@ -72,50 +68,72 @@ export default async function handler(req, res) {
     });
   }
 
-  try {
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+  const requestBody = JSON.stringify({
+    contents: [
       {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                { text: PROMPT },
-                { inline_data: { mime_type: mimeType, data: data } }
-              ]
-            }
-          ],
-          generationConfig: {
-            responseMimeType: 'application/json',
-            responseSchema: RESPONSE_SCHEMA
-          }
-        })
+        role: 'user',
+        parts: [
+          { text: PROMPT },
+          { inline_data: { mime_type: mimeType, data: data } }
+        ]
       }
-    );
-
-    const result = await geminiResponse.json();
-
-    if (!geminiResponse.ok) {
-      const message = result?.error?.message || 'The AI service returned an error.';
-      return res.status(geminiResponse.status).json({ error: message });
+    ],
+    generationConfig: {
+      responseMimeType: 'application/json',
+      responseSchema: RESPONSE_SCHEMA
     }
+  });
 
-    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      return res.status(500).json({ error: 'The AI did not return a readable response. Try a clearer photo or scan.' });
+  const MAX_ATTEMPTS = 3;
+  let lastError = 'The AI service returned an error.';
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: requestBody
+        }
+      );
+
+      const result = await geminiResponse.json();
+
+      // 429 = rate limited, 503 = model temporarily overloaded.
+      // Both are usually gone within a couple seconds, so retry quietly
+      // instead of immediately showing the person an error.
+      if (geminiResponse.status === 429 || geminiResponse.status === 503) {
+        lastError = result?.error?.message || 'The AI service is busy right now.';
+        if (attempt < MAX_ATTEMPTS) {
+          await new Promise((r) => setTimeout(r, attempt * 1200)); // 1.2s, then 2.4s
+          continue;
+        }
+        return res.status(503).json({ error: 'The AI service is unusually busy right now. Please wait a few seconds and try again.' });
+      }
+
+      if (!geminiResponse.ok) {
+        const message = result?.error?.message || 'The AI service returned an error.';
+        return res.status(geminiResponse.status).json({ error: message });
+      }
+
+      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        return res.status(500).json({ error: 'The AI did not return a readable response. Try a clearer photo or scan.' });
+      }
+
+      const parsed = JSON.parse(text);
+      return res.status(200).json(parsed);
+
+    } catch (err) {
+      console.error(err);
+      lastError = 'Something went wrong while analyzing the document. Please try again.';
+      if (attempt === MAX_ATTEMPTS) {
+        return res.status(500).json({ error: lastError });
+      }
     }
-
-    const parsed = JSON.parse(text);
-    return res.status(200).json(parsed);
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Something went wrong while analyzing the document. Please try again.' });
   }
 }
