@@ -23,6 +23,7 @@ const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4MB, leaves headroom for base64 overh
 const languageSelect = document.getElementById('language-select');
 
 let selectedFile = null;
+let guessedType = '';
 
 // ---- Sample document (demo safety net) ----
 // If wifi or the API flakes during a live demo, this button shows a
@@ -70,9 +71,32 @@ dropzone.addEventListener('drop', (e) => {
 
 function setSelectedFile(file) {
   if (file.size > MAX_FILE_BYTES) {
-    showError('That file is too large (max 4MB). Try a smaller photo, a compressed scan, or a shorter PDF.');
+    showError('That file is too large (max 4MB). Try a smaller photo, a compressed scan, or a shorter document.');
     return;
   }
+
+  // Some browsers (especially on mobile) don't reliably report a mime type
+  // for Word/text files, so fall back to guessing from the file extension.
+  const name = file.name.toLowerCase();
+  if (!file.type || file.type === 'application/octet-stream') {
+    if (name.endsWith('.docx')) {
+      guessedType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    } else if (name.endsWith('.txt')) {
+      guessedType = 'text/plain';
+    } else if (name.endsWith('.pdf')) {
+      guessedType = 'application/pdf';
+    } else {
+      guessedType = '';
+    }
+  } else {
+    guessedType = file.type;
+  }
+
+  if (name.endsWith('.doc') && !name.endsWith('.docx')) {
+    showError('Older .doc files aren\'t supported yet — please save it as .docx (Word\'s "Save As" menu) or as a PDF, then try again.');
+    return;
+  }
+
   selectedFile = file;
   fileNameEl.textContent = file.name;
   fileChosen.hidden = false;
@@ -117,7 +141,7 @@ decodeButton.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         data: base64Data,
-        mimeType: selectedFile.type || 'application/pdf',
+        mimeType: guessedType || selectedFile.type || 'application/pdf',
         language: languageSelect.value
       })
     });
