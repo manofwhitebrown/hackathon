@@ -2,5 +2,8 @@
   "name": "plain-terms",
   "version": "1.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "mammoth": "^1.8.0"
+  }
 }
