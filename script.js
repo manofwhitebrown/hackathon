@@ -103,6 +103,8 @@ function fileToBase64(file) {
 decodeButton.addEventListener('click', async () => {
   if (!selectedFile) return;
 
+  decodeButton.disabled = true; // stop a second click while this one is still working
+
   showStatus('Reading your document…');
 
   try {
@@ -133,6 +135,8 @@ decodeButton.addEventListener('click', async () => {
     } else {
       showError(err.message || 'Something went wrong. Please try again.');
     }
+  } finally {
+    decodeButton.disabled = false; // safe to click again now
   }
 });
 
