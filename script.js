@@ -407,7 +407,7 @@ document.getElementById('copy-button').addEventListener('click', async () => {
   }
 });
 
-document.getElementById('download-button').addEventListener('click', () => {
+document.getElementById('download-button').addEventListener('click', async () => {
   if (!lastResult) return;
 
   const d = lastResult;
@@ -465,7 +465,52 @@ document.getElementById('download-button').addEventListener('click', () => {
 
   const printContainer = document.getElementById('print-container');
   printContainer.innerHTML = html;
-  window.print();
+
+  const downloadBtn = document.getElementById('download-button');
+  const originalLabel = downloadBtn.textContent;
+
+  // If the PDF libraries didn't load (network hiccup, ad blocker, etc),
+  // fall back to the browser's built-in print-to-PDF instead of failing.
+  if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+    window.print();
+    return;
+  }
+
+  try {
+    downloadBtn.disabled = true;
+    downloadBtn.textContent = 'Preparing PDF…';
+
+    const canvas = await html2canvas(printContainer, { scale: 2, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save('plain-terms-summary.pdf');
+  } catch (err) {
+    console.error('PDF generation failed, falling back to print', err);
+    window.print();
+  } finally {
+    downloadBtn.disabled = false;
+    downloadBtn.textContent = originalLabel;
+  }
 });
 
 function escapeHtml(str) {
