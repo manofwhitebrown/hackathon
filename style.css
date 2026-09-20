@@ -640,3 +640,70 @@ html, body {
   .dropzone { padding: 2rem 1rem; }
   .risk-item { flex-direction: column; gap: 0.3rem; }
 }
+
+/* PDF export - hidden on screen, only shown when window.print() is triggered */
+#print-container {
+  display: none;
+}
+@media print {
+  body > *:not(#print-container) {
+    display: none !important;
+  }
+  #print-container {
+    display: block !important;
+    font-family: var(--sans);
+    color: var(--ink);
+    max-width: 100%;
+    padding: 0.5in;
+  }
+  #print-container h1 {
+    font-family: var(--serif);
+    font-size: 22px;
+    margin: 0 0 4px;
+  }
+  #print-container .print-doctype {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  #print-container h2 {
+    font-family: var(--serif);
+    font-size: 15px;
+    margin: 20px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+    page-break-after: avoid;
+  }
+  #print-container p, #print-container li {
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+  #print-container ul {
+    margin: 0 0 4px;
+    padding-left: 18px;
+  }
+  #print-container .print-item {
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+  #print-container .print-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+  }
+  #print-container .print-footer {
+    margin-top: 24px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 10px;
+    color: var(--ink-soft);
+  }
+}
