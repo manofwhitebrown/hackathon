@@ -35,7 +35,7 @@ html, body {
 
 .masthead {
   position: relative;
-  padding: 2.4rem 1.5rem 2rem;
+  padding: 1.8rem 1.5rem 1.6rem;
   background: linear-gradient(135deg, var(--accent-soft) 0%, var(--paper) 65%);
   overflow: hidden;
   box-shadow: 0 1px 0 var(--line);
@@ -94,7 +94,7 @@ html, body {
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem 4rem;
+  padding: 1.8rem 1.5rem 2.5rem;
 }
 
 .panel {
@@ -111,7 +111,7 @@ html, body {
   gap: 0.6rem;
   border: 1.5px dashed var(--line);
   border-radius: 14px;
-  padding: 2.75rem 1.5rem;
+  padding: 2rem 1.5rem;
   cursor: pointer;
   background: #fff;
   box-shadow: 0 1px 3px rgba(28, 35, 51, 0.05), 0 1px 2px rgba(28, 35, 51, 0.03);
@@ -300,8 +300,8 @@ html, body {
   justify-content: center;
   gap: 0.6rem;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
-  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.4rem;
+  padding: 0.9rem 1.4rem;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -629,15 +629,10 @@ html, body {
   margin: 0 auto;
   padding: 0 1.5rem 3rem;
 }
-.site-footer p {
-  color: var(--ink-soft);
-  font-size: 0.82rem;
-  border-top: 1px solid var(--line);
-  padding-top: 1.25rem;
-}
 .site-footer .credit {
-  border-top: none;
-  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+  color: var(--ink-soft);
   font-size: 0.76rem;
   opacity: 0.65;
 }
