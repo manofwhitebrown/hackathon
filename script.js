@@ -22,6 +22,36 @@ const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4MB, leaves headroom for base64 overh
 
 const languageSelect = document.getElementById('language-select');
 
+// ---- Dark / light mode ----
+const themeToggle = document.getElementById('theme-toggle');
+const sunIcon = document.getElementById('theme-icon-sun');
+const moonIcon = document.getElementById('theme-icon-moon');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  sunIcon.hidden = theme === 'dark';
+  moonIcon.hidden = theme !== 'dark';
+}
+
+function getInitialTheme() {
+  const saved = localStorage.getItem('plain-terms-theme');
+  if (saved === 'light' || saved === 'dark') return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+applyTheme(getInitialTheme());
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  try {
+    localStorage.setItem('plain-terms-theme', next);
+  } catch (err) {
+    // localStorage can fail in private browsing on some browsers - not critical, theme just won't persist
+  }
+});
+
 let selectedFile = null;
 let guessedType = '';
 let lastResult = null;
