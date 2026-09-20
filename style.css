@@ -635,6 +635,12 @@ html, body {
   border-top: 1px solid var(--line);
   padding-top: 1.25rem;
 }
+.site-footer .credit {
+  border-top: none;
+  padding-top: 0.5rem;
+  font-size: 0.76rem;
+  opacity: 0.65;
+}
 
 @media (max-width: 480px) {
   .dropzone { padding: 2rem 1rem; }
