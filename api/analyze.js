@@ -4,7 +4,11 @@
 
 import mammoth from 'mammoth';
 
-const GEMINI_MODEL = 'gemini-3.6-flash';
+// The fallback chain below can take longer than Vercel's default 10s limit
+// if multiple models are busy - this gives it enough room to actually try.
+export const config = {
+  maxDuration: 30
+};
 
 const BASE_PROMPT = `You are helping an ordinary person understand a confusing real-world document
 (this could be a medical result, a legal contract, an insurance letter, or a bill).
@@ -177,56 +181,79 @@ export default async function handler(req, res) {
     }
   });
 
-  const MAX_ATTEMPTS = 3;
-  let lastError = 'The AI service returned an error.';
+  const MODELS_TO_TRY = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-2.5-flash'];
+  const RETRIES_PER_MODEL = 2;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    try {
-      const geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
-          },
-          body: requestBody
+  let lastError = 'The AI service is unusually busy right now.';
+
+  for (const model of MODELS_TO_TRY) {
+    for (let attempt = 1; attempt <= RETRIES_PER_MODEL; attempt++) {
+      try {
+        const geminiResponse = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': apiKey
+            },
+            body: requestBody
+          }
+        );
+
+        const result = await geminiResponse.json();
+
+        // 429 = this specific model's free-tier rate limit is hit right now.
+        // 503 = this model's servers are briefly overloaded.
+        // Either way: a different model has its own separate quota, so
+        // falling through to it is more effective than waiting and retrying
+        // the same one.
+        if (geminiResponse.status === 429 || geminiResponse.status === 503) {
+          lastError = result?.error?.message || 'The AI service is busy right now.';
+          if (attempt < RETRIES_PER_MODEL) {
+            await sleep(800);
+            continue;
+          }
+          break; // give up on this model, fall through to the next one
         }
-      );
 
-      const result = await geminiResponse.json();
+        // 404 means this specific model name doesn't exist/isn't available
+        // to this API key - no point retrying it, move straight to the next.
+        if (geminiResponse.status === 404) {
+          lastError = result?.error?.message || 'Model unavailable.';
+          break;
+        }
 
-      // 429 = rate limited, 503 = model temporarily overloaded.
-      // Both are usually gone within a couple seconds, so retry quietly
-      // instead of immediately showing the person an error.
-      if (geminiResponse.status === 429 || geminiResponse.status === 503) {
-        lastError = result?.error?.message || 'The AI service is busy right now.';
-        if (attempt < MAX_ATTEMPTS) {
-          await new Promise((r) => setTimeout(r, attempt * 1200)); // 1.2s, then 2.4s
+        if (!geminiResponse.ok) {
+          // A real error (bad request, auth issue, etc) - not a capacity
+          // problem, so trying other models won't help. Fail immediately
+          // with the real reason instead of wasting time.
+          const message = result?.error?.message || 'The AI service returned an error.';
+          return res.status(geminiResponse.status).json({ error: message });
+        }
+
+        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) {
+          return res.status(500).json({ error: 'The AI did not return a readable response. Try a clearer photo or scan.' });
+        }
+
+        const parsed = JSON.parse(text);
+        return res.status(200).json(parsed);
+
+      } catch (err) {
+        console.error(err);
+        lastError = 'Something went wrong while analyzing the document.';
+        if (attempt < RETRIES_PER_MODEL) {
+          await sleep(800);
           continue;
         }
-        return res.status(503).json({ error: 'The AI service is unusually busy right now. Please wait a few seconds and try again.' });
-      }
-
-      if (!geminiResponse.ok) {
-        const message = result?.error?.message || 'The AI service returned an error.';
-        return res.status(geminiResponse.status).json({ error: message });
-      }
-
-      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) {
-        return res.status(500).json({ error: 'The AI did not return a readable response. Try a clearer photo or scan.' });
-      }
-
-      const parsed = JSON.parse(text);
-      return res.status(200).json(parsed);
-
-    } catch (err) {
-      console.error(err);
-      lastError = 'Something went wrong while analyzing the document. Please try again.';
-      if (attempt === MAX_ATTEMPTS) {
-        return res.status(500).json({ error: lastError });
+        break;
       }
     }
   }
+
+  // Every model in the fallback chain was busy - genuinely rare, but be honest about it.
+  console.error('All models exhausted:', lastError);
+  return res.status(503).json({ error: 'The AI service is unusually busy right now across all backup options. Please wait about a minute and try again.' });
 }
