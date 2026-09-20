@@ -1,711 +1,156 @@
-:root {
-  --paper: #FAF9F6;
-  --ink: #1C2333;
-  --ink-soft: #4A5164;
-  --line: #DEDBD3;
-  --accent: #0F6E63;
-  --accent-soft: #E4F0EE;
-  --risk-high: #B3261E;
-  --risk-high-bg: #FBEAE9;
-  --risk-medium: #92620A;
-  --risk-medium-bg: #FBF0DD;
-  --risk-low: #2F6B4F;
-  --risk-low-bg: #E9F3ED;
-  --serif: "Source Serif 4", Georgia, serif;
-  --sans: "Inter", system-ui, -apple-system, sans-serif;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plain Terms — decode confusing documents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
 
-* { box-sizing: border-box; }
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <svg class="brand-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="5" y="3" width="20" height="24" rx="2.5" stroke="currentColor" stroke-width="2"/>
+          <path d="M10 10H20M10 15H20M10 20H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="wordmark">Plain Terms</span>
+      </div>
+      <p class="tagline">Upload a confusing document. Get it explained in plain English.</p>
+    </div>
+  </header>
 
-/* This is the fix: without it, sections like .status and .error-panel
-   set their own "display: flex" below, which was silently overriding
-   the hidden attribute and causing spinner/error/results to overlap. */
-[hidden] {
-  display: none !important;
-}
+  <main class="page">
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--sans);
-  line-height: 1.55;
-}
+    <section class="how-it-works" aria-label="How it works">
+      <div class="how-step">
+        <span class="how-number">1</span>
+        <span class="how-text">Upload a document</span>
+      </div>
+      <div class="how-arrow" aria-hidden="true">→</div>
+      <div class="how-step">
+        <span class="how-number">2</span>
+        <span class="how-text">AI reads it</span>
+      </div>
+      <div class="how-arrow" aria-hidden="true">→</div>
+      <div class="how-step">
+        <span class="how-number">3</span>
+        <span class="how-text">Get it in plain English</span>
+      </div>
+    </section>
 
-.masthead {
-  position: relative;
-  padding: 2.4rem 1.5rem 2rem;
-  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--paper) 65%);
-  overflow: hidden;
-  box-shadow: 0 1px 0 var(--line);
-}
-.masthead::before {
-  content: "";
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(15, 110, 99, 0.14) 0%, rgba(15, 110, 99, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
-.masthead::after {
-  content: "";
-  position: absolute;
-  bottom: -80px;
-  left: 10%;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(15, 110, 99, 0.08) 0%, rgba(15, 110, 99, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
-.masthead-inner {
-  max-width: 640px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-.brand-mark {
-  color: var(--accent);
-  flex-shrink: 0;
-  filter: drop-shadow(0 1px 2px rgba(15, 110, 99, 0.15));
-}
-.wordmark {
-  font-family: var(--serif);
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-.tagline {
-  margin: 0.5rem 0 0;
-  color: var(--ink-soft);
-  font-size: 1.02rem;
-}
+    <section id="upload-section" class="panel">
+      <label for="file-input" class="dropzone" id="dropzone">
+        <div class="dropzone-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 26V6M20 6L13 13M20 6L27 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 26V31C6 32.6569 7.34315 34 9 34H31C32.6569 34 34 32.6569 34 31V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="dropzone-title">Drop a document here, or choose a file</span>
+        <span class="dropzone-hint">Photo, scan, PDF, or Word doc — medical results, contracts, insurance letters, bills</span>
+        <input type="file" id="file-input" accept="image/*,application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.txt,text/plain" hidden>
+      </label>
 
-.page {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem 4rem;
-}
+      <div class="file-chosen" id="file-chosen" hidden>
+        <span id="file-name"></span>
+        <button type="button" id="clear-file" class="text-button">Remove</button>
+      </div>
 
-.panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+      <div class="language-row">
+        <label for="language-select">Explain it in</label>
+        <select id="language-select">
+          <option value="Simple English" selected>English (simple words)</option>
+          <option value="Hindi">हिन्दी (Hindi)</option>
+          <option value="Telugu">తెలుగు (Telugu)</option>
+          <option value="Tamil">தமிழ் (Tamil)</option>
+          <option value="Spanish">Español (Spanish)</option>
+        </select>
+      </div>
 
-.dropzone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.6rem;
-  border: 1.5px dashed var(--line);
-  border-radius: 14px;
-  padding: 2.75rem 1.5rem;
-  cursor: pointer;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(28, 35, 51, 0.05), 0 1px 2px rgba(28, 35, 51, 0.03);
-  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
-}
-.dropzone:hover,
-.dropzone:focus-within {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: 0 6px 20px rgba(15, 110, 99, 0.12);
-  transform: translateY(-1px);
-}
-.dropzone-icon {
-  color: var(--accent);
-  margin-bottom: 0.2rem;
-}
-.dropzone-title {
-  font-weight: 500;
-  font-size: 1.05rem;
-}
-.dropzone-hint {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
+      <button type="button" id="decode-button" class="primary-button" disabled>Decode this document</button>
 
-.language-row {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.92rem;
-}
-.language-row label {
-  color: var(--ink-soft);
-  font-weight: 500;
-}
-.language-row select {
-  flex: 1;
-  padding: 0.6rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 0.92rem;
-  cursor: pointer;
-}
-.language-row select:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
+      <button type="button" id="sample-button" class="text-button">Or try a sample document instead →</button>
 
-.file-chosen {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-}
-#file-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-}
-#clear-file {
-  flex-shrink: 0;
-}
+      <p class="privacy-note">Nothing is saved by this app — your document is read once, analyzed, and discarded. It is processed by Google's Gemini AI, which may make mistakes and does not replace advice from a doctor, lawyer, or financial professional. Google's free-tier terms permit them to use this data to improve their models.</p>
+    </section>
 
-.text-button {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-family: var(--sans);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
+    <section id="status-section" class="status" hidden aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="status-text">Reading your document…</p>
+    </section>
 
-.primary-button {
-  background: linear-gradient(135deg, var(--ink) 0%, #2a3350 100%);
-  color: #fff;
-  border: none;
-  border-radius: 9px;
-  padding: 0.95rem 1.5rem;
-  font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(28, 35, 51, 0.15);
-  transition: background 0.18s ease, opacity 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
-}
-.primary-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent) 0%, #0c5850 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 110, 99, 0.22);
-}
-.primary-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(28, 35, 51, 0.15);
-}
-.primary-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.primary-button:focus-visible,
-.secondary-button:focus-visible,
-.dropzone:focus-visible,
-.text-button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+    <section id="error-section" class="error-panel" hidden aria-live="assertive">
+      <p id="error-text"></p>
+      <button type="button" id="retry-button" class="text-button">Try again</button>
+    </section>
 
-.secondary-button {
-  background: #fff;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 0.85rem 1.5rem;
-  font-family: var(--sans);
-  font-size: 0.98rem;
-  font-weight: 500;
-  cursor: pointer;
-  align-self: flex-start;
-  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
-}
-.secondary-button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  box-shadow: 0 2px 8px rgba(15, 110, 99, 0.1);
-  transform: translateY(-1px);
-}
-.secondary-button:active {
-  transform: translateY(0);
-}
+    <section id="results-section" class="results" hidden tabindex="-1" aria-live="polite">
 
-.privacy-note {
-  color: var(--ink-soft);
-  font-size: 0.85rem;
-  margin: 0;
-}
+      <div class="result-header">
+        <span id="doc-type-badge" class="doc-type-badge"></span>
+      </div>
 
-.status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 3rem 0;
-  color: var(--ink-soft);
-}
-.spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid var(--line);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+      <article class="result-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 2h7l3 3v11H4V2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 8h5M6.5 11h5M6.5 5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>What this document says</h2>
+        <p id="summary-text"></p>
+      </article>
 
-.error-panel {
-  background: var(--risk-high-bg);
-  border: 1px solid var(--risk-high);
-  border-radius: 8px;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-.error-panel p {
-  margin: 0;
-  color: var(--risk-high);
-}
+      <article class="result-block" id="action-items-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="7.2" stroke="currentColor" stroke-width="1.3"/></svg>What to do next</h2>
+        <ul id="action-items-list" class="action-items-list"></ul>
+      </article>
 
-.how-it-works {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-  padding: 1.1rem 1.4rem;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(28, 35, 51, 0.04);
-}
-.how-step {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.how-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent) 0%, #0c5850 100%);
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(15, 110, 99, 0.3);
-}
-.how-text {
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.how-arrow {
-  color: var(--line);
-  font-size: 0.9rem;
-}
+      <article class="result-block" id="dates-money-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="2" y="4" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 7.5H16M5.5 2.5V5M12.5 2.5V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Important dates & money</h2>
+        <div id="dates-money-list" class="dates-money-list"></div>
+      </article>
 
-.action-items-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-.action-items-list li {
-  padding: 0.75rem 1rem;
-  background: var(--accent-soft);
-  border-radius: 8px;
-  font-size: 0.95rem;
-  border-left: 3px solid var(--accent);
-}
+      <article class="result-block" id="risk-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 2L16.5 15H1.5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7.5V10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="13" r="0.9" fill="currentColor"/></svg>Worth paying attention to</h2>
+        <ul id="risk-list" class="risk-list"></ul>
+      </article>
 
-.dates-money-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-.date-money-card {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.1rem 0.6rem;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-.date-money-value {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--accent);
-}
-.date-money-label {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-.date-money-note {
-  flex-basis: 100%;
-  color: var(--ink-soft);
-  font-size: 0.88rem;
-}
+      <article class="result-block" id="before-after-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 5h6M3 9h4M3 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 5l2 2-2 2M12 13l-2-2 2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>In the document vs. in plain words</h2>
+        <div id="before-after-list" class="before-after-list"></div>
+      </article>
 
-.certainty-tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.15rem 0.5rem;
-  border-radius: 20px;
-  margin: 0.3rem 0;
-}
-.certainty-tag.clearly-stated {
-  background: var(--risk-low-bg);
-  color: var(--risk-low);
-}
-.certainty-tag.needs-verification {
-  background: var(--risk-medium-bg);
-  color: var(--risk-medium);
-}
+      <article class="result-block" id="glossary-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 3.5C3 2.7 3.7 2 4.5 2H14v13H4.5c-.8 0-1.5.7-1.5 1.5V3.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 6.5H11M6 9.5H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Terms explained</h2>
+        <dl id="glossary-list" class="glossary-list"></dl>
+      </article>
 
-.risk-check {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.88rem;
-}
+      <article class="result-block" id="questions-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6.8 6.9c.2-1 1.1-1.7 2.2-1.7 1.2 0 2.2.9 2.2 2 0 1.6-2.1 1.6-2.1 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="12.7" r="0.9" fill="currentColor"/></svg>Questions worth asking</h2>
+        <ul id="questions-list" class="questions-list"></ul>
+      </article>
 
-.before-after-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.before-after-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.ba-original, .ba-plain {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.93rem;
-}
-.ba-original {
-  background: #f4f2ec;
-  color: var(--ink-soft);
-  font-style: italic;
-}
-.ba-plain {
-  background: var(--accent-soft);
-  color: var(--ink);
-}
-.ba-label {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  margin-bottom: 0.25rem;
-  opacity: 0.7;
-}
+      <div class="result-actions">
+        <button type="button" id="copy-button" class="secondary-button">Copy results</button>
+        <button type="button" id="download-button" class="secondary-button">Download as PDF</button>
+      </div>
 
-.explain-more-btn {
-  display: block;
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.3rem 0 0;
-  font-family: var(--sans);
-}
-.explain-more-text {
-  display: block;
-  margin-top: 0.3rem;
-  padding-top: 0.3rem;
-  border-top: 1px dashed var(--line);
-  font-size: 0.9rem;
-}
+      <button type="button" id="another-button" class="secondary-button">Decode another document</button>
 
-.ask-who-tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  margin-right: 0.5rem;
-}
+    </section>
 
-.result-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-.result-actions .secondary-button {
-  align-self: auto;
-}
+  </main>
 
-.results {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 2.5rem;
-  animation: fadeIn 0.35s ease;
-}
-.results:focus {
-  outline: none; /* focus is for assistive tech / keyboard users landing here, not a visual box */
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+  <div id="print-container"></div>
 
-@media (max-width: 480px) {
-  .how-it-works { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
-  .how-arrow { display: none; }
-}
+  <footer class="site-footer">
+    <p class="credit">Built by Mohammed Abdul Nayeem</p>
+  </footer>
 
-.result-header {
-  display: flex;
-}
-.doc-type-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 0.35rem 0.8rem;
-  border-radius: 20px;
-}
-.doc-type-badge::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex-shrink: 0;
-}
-
-.result-block {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 1.4rem 1.5rem 1.5rem;
-  box-shadow: 0 1px 3px rgba(28, 35, 51, 0.05), 0 1px 2px rgba(28, 35, 51, 0.03);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-.result-block:hover {
-  box-shadow: 0 8px 24px rgba(28, 35, 51, 0.07);
-  transform: translateY(-2px);
-}
-
-.result-block h2 {
-  font-family: var(--serif);
-  font-size: 1.32rem;
-  font-weight: 600;
-  margin: 0 0 0.8rem;
-  padding-bottom: 0.65rem;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  letter-spacing: -0.005em;
-}
-.block-icon {
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
-#summary-text {
-  font-size: 1.05rem;
-  color: var(--ink);
-}
-
-.risk-list, .questions-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.risk-item {
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.9rem 1rem;
-  border-radius: 8px;
-  border-left: 3px solid var(--line);
-}
-.risk-item.high { background: var(--risk-high-bg); border-left-color: var(--risk-high); }
-.risk-item.medium { background: var(--risk-medium-bg); border-left-color: var(--risk-medium); }
-.risk-item.low { background: var(--risk-low-bg); border-left-color: var(--risk-low); }
-
-.risk-label {
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: capitalize;
-  white-space: nowrap;
-  padding-top: 0.15rem;
-}
-.risk-item.high .risk-label { color: var(--risk-high); }
-.risk-item.medium .risk-label { color: var(--risk-medium); }
-.risk-item.low .risk-label { color: var(--risk-low); }
-
-.risk-body strong {
-  display: block;
-  font-size: 0.98rem;
-  margin-bottom: 0.2rem;
-}
-.risk-body span {
-  color: var(--ink-soft);
-  font-size: 0.94rem;
-}
-
-.glossary-list {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-.glossary-list dt {
-  font-weight: 600;
-  font-family: var(--serif);
-  font-size: 1rem;
-}
-.glossary-list dd {
-  margin: 0.15rem 0 0;
-  color: var(--ink-soft);
-  font-size: 0.95rem;
-}
-
-.questions-list li {
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-size: 0.97rem;
-}
-
-.site-footer {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 1.5rem 3rem;
-}
-.site-footer p {
-  color: var(--ink-soft);
-  font-size: 0.82rem;
-  border-top: 1px solid var(--line);
-  padding-top: 1.25rem;
-}
-.site-footer .credit {
-  border-top: none;
-  padding-top: 0.5rem;
-  font-size: 0.76rem;
-  opacity: 0.65;
-}
-
-@media (max-width: 480px) {
-  .dropzone { padding: 2rem 1rem; }
-  .risk-item { flex-direction: column; gap: 0.3rem; }
-}
-
-/* PDF export container - kept off-screen permanently, captured as an image
-   for one-click PDF download. Not display:none, since html2canvas needs it
-   to actually render (zero-size elements can't be captured). */
-#print-container {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  width: 760px;
-  background: #fff;
-  color: var(--ink);
-  font-family: var(--sans);
-  padding: 48px;
-  box-sizing: border-box;
-}
-#print-container h1 {
-  font-family: var(--serif);
-  font-size: 26px;
-  margin: 0 0 4px;
-}
-#print-container .print-doctype {
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-#print-container h2 {
-  font-family: var(--serif);
-  font-size: 18px;
-  margin: 24px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--line);
-}
-#print-container p, #print-container li {
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 10px;
-}
-#print-container ul {
-  margin: 0 0 6px;
-  padding-left: 20px;
-}
-#print-container .print-item {
-  margin-bottom: 12px;
-}
-#print-container .print-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 2px 7px;
-  border-radius: 4px;
-  margin-right: 6px;
-}
-#print-container .print-footer {
-  margin-top: 28px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-  font-size: 11px;
-  color: var(--ink-soft);
-}
+  <script src="script.js"></script>
+</body>
+</html>
