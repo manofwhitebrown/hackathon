@@ -21,25 +21,32 @@ friend or family member with no background in the subject:
 - If a technical term truly cannot be avoided, explain it in the simplest possible way the moment you use it.
 - Avoid long or compound sentences. One idea per sentence where possible.
 
+EVIDENCE RULE (most important rule in this whole prompt): every claim you make must be traceable
+to something actually written in the document. Wherever the schema below asks for "evidence",
+you must give a short verbatim excerpt (a few words to one sentence, copied exactly as it appears
+in the document - do not paraphrase it) that the claim is based on. If you cannot find a real excerpt
+to support a claim, do not make that claim. Never invent dates, amounts, deadlines, fees, diagnoses,
+rights, or obligations that are not actually in the document.
+
 Read the attached document and respond with:
 
 1. documentType: a short label for what kind of document this is (e.g. "Medical result", "Insurance letter", "Legal contract", "Bill").
 
 2. summary: 3-5 plain, simple sentences explaining what this document actually says.
 
-3. glossary: the confusing or technical terms that actually appear in THIS document. For each: term, a one-sentence simple definition, and moreDetail (2-3 sentences going a bit deeper, for someone who wants more than the one-liner). Only include terms that appear in the document. Empty list if none.
+3. glossary: the confusing or technical terms that actually appear in THIS document - never a generic dictionary of terms that don't appear here. For each: term, definition (one simple sentence), moreDetail (2-3 sentences going a bit deeper), and evidence (the exact short phrase or sentence from the document where this term appears). Only include terms that appear verbatim in the document. Empty list if none.
 
-4. riskFlags: things worth paying attention to - unusual clauses, concerning results, hidden fees, deadlines, anything that could cost money, health, or legal standing if missed. For each: severity ("high"/"medium"/"low"), issue (short title), explanation (why it matters and what the impact could be), whatToCheck (one concrete thing the person should verify or do about it), and certainty ("stated" if this is explicitly written in the document, "interpretation" if you are inferring or reading between the lines). Do not invent risks. Empty list if none.
+4. riskFlags: things worth paying attention to - unusual clauses, concerning results, hidden fees, deadlines, anything that could cost money, health, or legal standing if missed. For each: severity ("high"/"medium"/"low"), issue (short title), explanation (why it matters and what the impact could be), whatToCheck (one concrete thing the person should verify or do about it), evidence (the exact excerpt from the document this risk is based on - can be an empty string only if certainty is "unclear"), and certainty: "stated" if this is explicitly written in the document, "interpretation" if you are inferring or reading between the lines from something that is in the document, or "unclear" if the document simply does not give enough information to know. Do not invent risks. Empty list if none.
 
-5. actionItems: 2-5 concrete, specific actions the person should take because of this document (e.g. "Pay $110 by September 30" or "Call your insurer to confirm this claim number"). These are things to DO, distinct from questions to ask.
+5. actionItems: 2-5 concrete, specific actions the person should take because of this document (e.g. "Pay $110 by September 30" or "Call your insurer to confirm this claim number"). For each: action (the specific thing to do) and evidence (the exact excerpt from the document that this action is based on). These are things to DO, distinct from questions to ask.
 
 6. importantDatesAndMoney: every deadline, payment amount, fee, deductible, or renewal date that appears in the document. For each: label (what it is), value (the date or amount, exactly as it would be said aloud), and note (one short sentence of context). Empty list if genuinely none appear.
 
-7. questionsToAsk: 3-6 specific, smart questions based on THIS document. For each: question, and askWho - who the person should ask: "Doctor", "Lawyer", "Insurer", "Biller", or "Other".
+7. questionsToAsk: 3-6 specific, smart questions based on THIS document. For each: question, askWho - who the person should ask: "Doctor", "Lawyer", "Insurer", "Biller", or "Other" - and basedOn (the exact excerpt from the document, or the gap in it, that prompted this question).
 
-8. beforeAfter: 2-4 examples pairing a short confusing phrase or sentence actually taken from the document (original) with its plain-language explanation (plain). Pick the most jargon-heavy or important phrases. This is different from the glossary - use short phrases or sentences, not single terms.
+8. beforeAfter: 2-4 examples pairing a short confusing phrase or sentence actually taken from the document (original, verbatim) with its plain-language explanation (plain). Pick the most jargon-heavy or important phrases. This is different from the glossary - use short phrases or sentences, not single terms.
 
-Be accurate and conservative. Do not diagnose medical conditions or give legal advice - only explain what the document says and flag what's worth asking about. Never invent information that is not in the document.`;
+Be accurate and conservative. Do not diagnose medical conditions or give legal advice - only explain what the document says and flag what's worth asking about. Never invent information that is not in the document. If you are not confident an excerpt is verbatim from the document, leave the field out rather than guessing.`;
 
 const RESPONSE_SCHEMA = {
   type: 'OBJECT',
@@ -53,9 +60,10 @@ const RESPONSE_SCHEMA = {
         properties: {
           term: { type: 'STRING' },
           definition: { type: 'STRING' },
-          moreDetail: { type: 'STRING' }
+          moreDetail: { type: 'STRING' },
+          evidence: { type: 'STRING' }
         },
-        required: ['term', 'definition', 'moreDetail']
+        required: ['term', 'definition', 'moreDetail', 'evidence']
       }
     },
     riskFlags: {
@@ -67,14 +75,22 @@ const RESPONSE_SCHEMA = {
           issue: { type: 'STRING' },
           explanation: { type: 'STRING' },
           whatToCheck: { type: 'STRING' },
-          certainty: { type: 'STRING', enum: ['stated', 'interpretation'] }
+          evidence: { type: 'STRING' },
+          certainty: { type: 'STRING', enum: ['stated', 'interpretation', 'unclear'] }
         },
-        required: ['severity', 'issue', 'explanation', 'whatToCheck', 'certainty']
+        required: ['severity', 'issue', 'explanation', 'whatToCheck', 'evidence', 'certainty']
       }
     },
     actionItems: {
       type: 'ARRAY',
-      items: { type: 'STRING' }
+      items: {
+        type: 'OBJECT',
+        properties: {
+          action: { type: 'STRING' },
+          evidence: { type: 'STRING' }
+        },
+        required: ['action', 'evidence']
+      }
     },
     importantDatesAndMoney: {
       type: 'ARRAY',
@@ -94,9 +110,10 @@ const RESPONSE_SCHEMA = {
         type: 'OBJECT',
         properties: {
           question: { type: 'STRING' },
-          askWho: { type: 'STRING', enum: ['Doctor', 'Lawyer', 'Insurer', 'Biller', 'Other'] }
+          askWho: { type: 'STRING', enum: ['Doctor', 'Lawyer', 'Insurer', 'Biller', 'Other'] },
+          basedOn: { type: 'STRING' }
         },
-        required: ['question', 'askWho']
+        required: ['question', 'askWho', 'basedOn']
       }
     },
     beforeAfter: {
