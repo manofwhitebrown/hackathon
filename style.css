@@ -427,11 +427,39 @@ html, body {
   background: var(--risk-medium-bg);
   color: var(--risk-medium);
 }
+.certainty-tag.document-unclear {
+  background: var(--line);
+  color: var(--ink-soft);
+}
 
 .risk-check {
   display: block;
   margin-top: 0.35rem;
   font-size: 0.88rem;
+}
+
+.evidence-snippet {
+  display: block;
+  margin-top: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--quote-bg);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.evidence-label {
+  display: inline;
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  margin-right: 0.3rem;
+}
+.action-text {
+  display: block;
 }
 
 .before-after-list {
