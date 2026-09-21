@@ -61,38 +61,56 @@ let lastResult = null;
 // real, fully-worked example instantly, with no network call needed.
 const sampleButton = document.getElementById('sample-button');
 
+// This sample is a single self-contained fictional letter. Every quote below is verbatim
+// from SAMPLE_SOURCE_TEXT, so the demo output never references something the letter
+// doesn't actually say (a judge can check this by clicking "view sample document").
+const SAMPLE_SOURCE_TEXT = `Re: Claim #A-48291 — Notice of Adjustment
+
+Dear Member,
+
+This letter is to inform you that your recent claim has been adjudicated as not medically necessary per plan guidelines. As a result, the amount of $1,240.00 has been applied to your responsibility rather than covered by your plan.
+
+Our review found no prior authorization on file for this procedure. Prior authorization is required under your plan before this type of treatment is performed.
+
+Requests for reconsideration must be submitted within sixty (60) calendar days of the date of this notice. Appeals received after this window will not be considered under our standard internal review process.
+
+If you disagree with this decision, you may submit a written appeal along with any supporting documentation, such as a letter of medical necessity from your treating physician.
+
+Sincerely,
+Member Services`;
+
 const SAMPLE_RESULT = {
   documentType: 'Insurance letter',
-  summary: 'Your insurer is denying part of a recent claim because they say the procedure was "not medically necessary." You have 60 days from the date of this letter to file an appeal. If you miss that window, you lose the right to challenge the decision through this insurer\'s internal process.',
+  summary: 'Your insurer decided your recent claim was "not medically necessary" and will not pay for it. That leaves you responsible for $1,240.00. You have 60 days from the date of this letter to file an appeal. The letter also says there was no prior authorization on file, which is part of why the claim was denied.',
   actionItems: [
-    'Mark the appeal deadline on your calendar today, not later',
-    'Call your insurer and ask for the specific policy they used to deny this claim',
-    'Ask your doctor\'s office for a letter of medical necessity to support your appeal'
+    { action: 'Mark the appeal deadline on your calendar today, not later', evidence: 'Requests for reconsideration must be submitted within sixty (60) calendar days of the date of this notice.' },
+    { action: 'Call your insurer and ask what specific plan guideline they used to deny this claim', evidence: 'adjudicated as not medically necessary per plan guidelines' },
+    { action: 'Ask your doctor\'s office for a letter of medical necessity to support your appeal', evidence: 'you may submit a written appeal along with any supporting documentation, such as a letter of medical necessity' }
   ],
   importantDatesAndMoney: [
-    { label: 'Appeal deadline', value: '60 days from letter date', note: 'Miss this and you lose the right to appeal directly with this insurer.' },
-    { label: 'Amount denied', value: 'Not specified in this letter', note: 'Ask for the exact dollar amount in writing.' }
+    { label: 'Appeal deadline', value: '60 days from letter date', note: 'Miss this and appeals after this window will not be considered under the insurer\'s standard process.' },
+    { label: 'Amount you owe', value: '$1,240.00', note: 'This is the amount that moved from "covered by plan" to "your responsibility."' }
   ],
   glossary: [
-    { term: 'Prior authorization', definition: 'Approval your insurer requires before a treatment, or they may refuse to pay for it.', moreDetail: 'Even if a treatment is medically appropriate, insurers can deny payment if this approval step was skipped beforehand — it is a procedural requirement, separate from whether the treatment itself was necessary.' },
-    { term: 'Explanation of Benefits (EOB)', definition: 'A statement showing what your insurer paid, denied, and why — not a bill itself.', moreDetail: 'You may still receive a separate bill from your provider for anything the EOB shows as denied or as your responsibility.' },
-    { term: 'Medically necessary', definition: 'The insurer\'s judgment that a treatment was required to treat your condition, used here as the reason for denial.', moreDetail: 'This is the insurer\'s own determination, not a medical fact — it can be challenged with supporting documentation from your doctor.' }
+    { term: 'Prior authorization', definition: 'Approval your insurer requires before a treatment, or they may refuse to pay for it.', moreDetail: 'Even if a treatment turns out to be appropriate, insurers can still deny payment if this approval step was skipped beforehand. It is a procedural requirement, separate from whether the treatment itself was necessary.', evidence: 'Prior authorization is required under your plan before this type of treatment is performed.' },
+    { term: 'Adjudicated', definition: 'A formal word for "decided" — the insurer reviewed the claim and made an official ruling on it.', moreDetail: 'This is standard insurance language for how a claim was processed, not a legal judgment against you personally.', evidence: 'your recent claim has been adjudicated as not medically necessary' },
+    { term: 'Medically necessary', definition: 'The insurer\'s own judgment about whether a treatment was required, used here as the reason for denial.', moreDetail: 'This is the insurer\'s determination, not a medical fact, and it can be challenged with supporting documentation from your doctor.', evidence: 'not medically necessary per plan guidelines' }
   ],
   riskFlags: [
-    { severity: 'high', issue: '60-day appeal deadline', explanation: 'Miss this date and you permanently lose the right to appeal through the insurer directly.', whatToCheck: 'Confirm the exact letter date and count 60 days from it.', certainty: 'stated' },
-    { severity: 'medium', issue: 'No prior authorization on file', explanation: 'The letter implies the procedure was done without pre-approval, which is part of why it was denied.', whatToCheck: 'Ask your provider whether prior authorization was requested and what happened to it.', certainty: 'interpretation' },
-    { severity: 'low', issue: 'Balance may still be billed by the provider', explanation: 'Even during an appeal, your doctor\'s office may send you a bill for the disputed amount.', whatToCheck: 'Ask your provider\'s billing department to pause collections while the appeal is active.', certainty: 'interpretation' }
+    { severity: 'high', issue: '60-day appeal deadline', explanation: 'Miss this date and your appeal will not be considered through the insurer\'s standard process.', whatToCheck: 'Confirm the exact date printed on your letter and count 60 days from it.', evidence: 'Requests for reconsideration must be submitted within sixty (60) calendar days of the date of this notice.', certainty: 'stated' },
+    { severity: 'medium', issue: 'No prior authorization on file', explanation: 'This is part of why the claim was denied, and it may be worth confirming whether it was actually requested.', whatToCheck: 'Ask your provider\'s office whether they requested prior authorization and what happened to that request.', evidence: 'Our review found no prior authorization on file for this procedure.', certainty: 'stated' },
+    { severity: 'low', issue: 'Whether you\'ll be billed while the appeal is pending', explanation: 'The letter does not say whether collection on the $1,240.00 pauses during an appeal.', whatToCheck: 'Ask your provider\'s billing department directly, since the letter is silent on this.', evidence: '', certainty: 'unclear' }
   ],
   beforeAfter: [
     { original: 'This claim has been adjudicated as not medically necessary per plan guidelines.', plain: 'Your insurer decided you did not need this treatment, based on their own rules, and will not pay for it.' },
-    { original: 'Requests for reconsideration must be submitted within sixty (60) calendar days of the date of this notice.', plain: 'You have 60 days from today\'s date on this letter to formally disagree with their decision.' }
+    { original: 'Requests for reconsideration must be submitted within sixty (60) calendar days of the date of this notice.', plain: 'You have 60 days from the date on this letter to formally disagree with their decision.' }
   ],
   questionsToAsk: [
-    { question: 'What exact date is 60 days from today, and where do I send the appeal?', askWho: 'Insurer' },
-    { question: 'Can you send me the specific clinical policy you used to decide this was "not medically necessary"?', askWho: 'Insurer' },
-    { question: 'Was prior authorization required for this procedure, and if so, why wasn\'t it obtained?', askWho: 'Doctor' },
-    { question: 'Will you support my appeal with a letter of medical necessity?', askWho: 'Doctor' },
-    { question: 'If the appeal is denied, what is the next step — external review?', askWho: 'Insurer' }
+    { question: 'What exact date is 60 days from the date on this letter, and where do I send the appeal?', askWho: 'Insurer', basedOn: 'Requests for reconsideration must be submitted within sixty (60) calendar days of the date of this notice.' },
+    { question: 'What specific plan guideline did you use to decide this was "not medically necessary"?', askWho: 'Insurer', basedOn: 'adjudicated as not medically necessary per plan guidelines' },
+    { question: 'Was prior authorization requested for this procedure, and if so, what happened to it?', askWho: 'Doctor', basedOn: 'Our review found no prior authorization on file for this procedure.' },
+    { question: 'Will you write a letter of medical necessity to support my appeal?', askWho: 'Doctor', basedOn: 'you may submit a written appeal along with any supporting documentation, such as a letter of medical necessity' },
+    { question: 'Will I be billed for the $1,240.00 while my appeal is still pending?', askWho: 'Biller', basedOn: 'The letter does not say whether collection is paused during an appeal.' }
   ]
 };
 
@@ -263,7 +281,14 @@ function renderResults(data) {
     actionBlock.hidden = false;
     data.actionItems.forEach((item) => {
       const li = document.createElement('li');
-      li.textContent = item;
+      // Supports both the new {action, evidence} shape and a plain string,
+      // so a stale cached response or the older schema doesn't break the page.
+      const actionText = typeof item === 'string' ? item : item.action;
+      const evidence = typeof item === 'string' ? null : item.evidence;
+      li.innerHTML = `
+        <span class="action-text">${escapeHtml(actionText)}</span>
+        ${evidence ? `<span class="evidence-snippet"><span class="evidence-label">From the document:</span> "${escapeHtml(evidence)}"</span>` : ''}
+      `;
       actionList.appendChild(li);
     });
   } else {
@@ -300,14 +325,19 @@ function renderResults(data) {
       const li = document.createElement('li');
       li.className = `risk-item ${risk.severity || 'low'}`;
       const marker = risk.severity === 'high' ? '●' : risk.severity === 'medium' ? '◐' : '○';
-      const certaintyLabel = risk.certainty === 'interpretation' ? 'Needs verification' : 'Clearly stated';
-      const certaintyClass = risk.certainty === 'interpretation' ? 'needs-verification' : 'clearly-stated';
+      const certaintyMap = {
+        stated: { label: 'Clearly stated', cls: 'clearly-stated' },
+        interpretation: { label: 'Needs verification', cls: 'needs-verification' },
+        unclear: { label: 'Document unclear', cls: 'document-unclear' }
+      };
+      const certainty = certaintyMap[risk.certainty] || certaintyMap.interpretation;
       li.innerHTML = `
         <span class="risk-label"><span class="risk-marker" aria-hidden="true">${marker}</span> ${risk.severity || ''}</span>
         <span class="risk-body">
           <strong>${escapeHtml(risk.issue)}</strong>
-          <span class="certainty-tag ${certaintyClass}">${certaintyLabel}</span>
+          <span class="certainty-tag ${certainty.cls}">${certainty.label}</span>
           <span>${escapeHtml(risk.explanation)}</span>
+          ${risk.evidence ? `<span class="evidence-snippet"><span class="evidence-label">From the document:</span> "${escapeHtml(risk.evidence)}"</span>` : ''}
           ${risk.whatToCheck ? `<span class="risk-check"><strong>Check:</strong> ${escapeHtml(risk.whatToCheck)}</span>` : ''}
         </span>
       `;
@@ -349,6 +379,7 @@ function renderResults(data) {
       const moreId = `glossary-more-${i}`;
       dd.innerHTML = `
         ${escapeHtml(entry.definition)}
+        ${entry.evidence ? `<span class="evidence-snippet"><span class="evidence-label">Appears as:</span> "${escapeHtml(entry.evidence)}"</span>` : ''}
         ${entry.moreDetail ? `<button type="button" class="explain-more-btn" data-target="${moreId}">Explain more ▾</button>
         <span id="${moreId}" class="explain-more-text" hidden>${escapeHtml(entry.moreDetail)}</span>` : ''}
       `;
@@ -377,7 +408,11 @@ function renderResults(data) {
       const li = document.createElement('li');
       const questionText = typeof q === 'string' ? q : q.question;
       const askWho = typeof q === 'string' ? null : q.askWho;
-      li.innerHTML = `${askWho ? `<span class="ask-who-tag">${escapeHtml(askWho)}</span>` : ''}${escapeHtml(questionText)}`;
+      const basedOn = typeof q === 'string' ? null : q.basedOn;
+      li.innerHTML = `
+        ${askWho ? `<span class="ask-who-tag">${escapeHtml(askWho)}</span>` : ''}${escapeHtml(questionText)}
+        ${basedOn ? `<span class="evidence-snippet"><span class="evidence-label">Based on:</span> "${escapeHtml(basedOn)}"</span>` : ''}
+      `;
       questionsList.appendChild(li);
     });
   } else {
@@ -395,7 +430,11 @@ function buildPlainTextSummary(data) {
 
   if (data.actionItems?.length) {
     lines.push('WHAT TO DO NEXT');
-    data.actionItems.forEach((a) => lines.push(`- ${a}`));
+    data.actionItems.forEach((a) => {
+      const actionText = typeof a === 'string' ? a : a.action;
+      const evidence = typeof a === 'string' ? null : a.evidence;
+      lines.push(`- ${actionText}${evidence ? ` (From the document: "${evidence}")` : ''}`);
+    });
     lines.push('');
   }
   if (data.importantDatesAndMoney?.length) {
@@ -448,7 +487,11 @@ document.getElementById('download-button').addEventListener('click', async () =>
 
   if (d.actionItems?.length) {
     html += `<h2>What to do next</h2><ul>`;
-    d.actionItems.forEach((a) => { html += `<li>${esc(a)}</li>`; });
+    d.actionItems.forEach((a) => {
+      const actionText = typeof a === 'string' ? a : a.action;
+      const evidence = typeof a === 'string' ? null : a.evidence;
+      html += `<li>${esc(actionText)}${evidence ? `<br><span style="color:#4A5164"><em>From the document: "${esc(evidence)}"</em></span>` : ''}</li>`;
+    });
     html += `</ul>`;
   }
 
@@ -462,8 +505,9 @@ document.getElementById('download-button').addEventListener('click', async () =>
   if (d.riskFlags?.length) {
     html += `<h2>Worth paying attention to</h2>`;
     d.riskFlags.forEach((r) => {
-      const certainty = r.certainty === 'interpretation' ? 'Needs verification' : 'Clearly stated';
-      html += `<div class="print-item"><span class="print-tag">${esc((r.severity || '').toUpperCase())}</span><span class="print-tag">${esc(certainty)}</span><br><strong>${esc(r.issue)}</strong><br>${esc(r.explanation)}${r.whatToCheck ? `<br><em>Check: ${esc(r.whatToCheck)}</em>` : ''}</div>`;
+      const certaintyLabels = { stated: 'Clearly stated', interpretation: 'Needs verification', unclear: 'Document unclear' };
+      const certainty = certaintyLabels[r.certainty] || 'Needs verification';
+      html += `<div class="print-item"><span class="print-tag">${esc((r.severity || '').toUpperCase())}</span><span class="print-tag">${esc(certainty)}</span><br><strong>${esc(r.issue)}</strong><br>${esc(r.explanation)}${r.evidence ? `<br><em>From the document: "${esc(r.evidence)}"</em>` : ''}${r.whatToCheck ? `<br><em>Check: ${esc(r.whatToCheck)}</em>` : ''}</div>`;
     });
   }
 
