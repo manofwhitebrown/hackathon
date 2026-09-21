@@ -1,233 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plain Terms — Understand what matters</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap"
-    rel="stylesheet"
-  />
-
-  <link rel="stylesheet" href="/style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plain Terms: decode confusing documents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="/">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 36 36" fill="none">
-            <rect x="5" y="3" width="25" height="30" rx="4" fill="currentColor"/>
-            <path d="M11 11H24M11 16H24M11 21H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="brand-name">Plain Terms</span>
-      </a>
 
-      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
-        <span id="themeIcon">☾</span>
-      </button>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="header-row">
+        <div class="brand">
+          <svg class="brand-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="5" y="3" width="20" height="24" rx="2.5" stroke="currentColor" stroke-width="2"/>
+            <path d="M10 10H20M10 15H20M10 20H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="wordmark">Plain Terms</span>
+        </div>
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch between light and dark mode">
+          <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M9 1v2M9 15v2M17 9h-2M3 9H1M15 3l-1.4 1.4M4.4 13.6 3 15M15 15l-1.4-1.4M4.4 4.4 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" hidden><path d="M15.5 10.8A6.8 6.8 0 1 1 7.2 2.5a5.3 5.3 0 0 0 8.3 8.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="tagline">Upload a confusing document. Get it explained in plain English.</p>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-inner">
-        <p class="eyebrow">DOCUMENT DECODER</p>
+  <main class="page">
 
-        <h1>
-          Understand what<br />
-          your document <em>actually says.</em>
-        </h1>
-
-        <p class="hero-copy">
-          Upload a confusing document. We find what matters and explain it
-          in plain language.
-        </p>
-
-        <div class="how-it-works">
-          <div class="step">
-            <span class="step-number">1</span>
-            <span>Upload a document</span>
-          </div>
-
-          <span class="step-arrow">→</span>
-
-          <div class="step">
-            <span class="step-number">2</span>
-            <span>We find what matters</span>
-          </div>
-
-          <span class="step-arrow">→</span>
-
-          <div class="step">
-            <span class="step-number">3</span>
-            <span>Get it in plain English</span>
-          </div>
-        </div>
+    <section class="how-it-works" aria-label="How it works">
+      <div class="how-step">
+        <span class="how-number">1</span>
+        <span class="how-text">Upload a document</span>
+      </div>
+      <div class="how-arrow" aria-hidden="true">→</div>
+      <div class="how-step">
+        <span class="how-number">2</span>
+        <span class="how-text">AI reads it</span>
+      </div>
+      <div class="how-arrow" aria-hidden="true">→</div>
+      <div class="how-step">
+        <span class="how-number">3</span>
+        <span class="how-text">Get it in plain English</span>
       </div>
     </section>
 
-    <section class="workspace">
-      <div class="upload-card" id="uploadCard">
-        <div class="upload-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48" fill="none">
-            <path
-              d="M24 31V8M24 8L16 16M24 8L32 16"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M10 27V36C10 38.2091 11.7909 40 14 40H34C36.2091 40 38 38.2091 38 36V27"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-            />
+    <section id="upload-section" class="panel">
+      <label for="file-input" class="dropzone" id="dropzone">
+        <div class="dropzone-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 26V6M20 6L13 13M20 6L27 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 26V31C6 32.6569 7.34315 34 9 34H31C32.6569 34 34 32.6569 34 31V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
+        <span class="dropzone-title">Drop a document here, or choose a file</span>
+        <span class="dropzone-hint">Photo, scan, PDF, or Word doc. Medical results, contracts, insurance letters, bills.</span>
+        <input type="file" id="file-input" accept="image/*,application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.txt,text/plain" hidden>
+      </label>
 
-        <h2>Drop your document here</h2>
-        <p>or choose a file from your device</p>
-
-        <input
-          id="fileInput"
-          type="file"
-          accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp"
-          hidden
-        />
-
-        <div class="upload-actions">
-          <button id="chooseFile" class="primary-button" type="button">
-            Choose file
-          </button>
-
-          <button id="sampleButton" class="secondary-button" type="button">
-            Try a sample document
-          </button>
-        </div>
-
-        <p class="supported">
-          PDF · DOCX · TXT · JPG · PNG · WEBP · Max 4 MB
-        </p>
+      <div class="file-chosen" id="file-chosen" hidden>
+        <span id="file-name"></span>
+        <button type="button" id="clear-file" class="text-button">Remove</button>
       </div>
 
-      <div class="privacy-note">
-        <span class="privacy-icon">✓</span>
-        <span>
-          <strong>Privacy-first.</strong>
-          Your document is read for this analysis and isn't stored by Plain Terms.
-          If using Google's free AI tier, submitted data may be used by Google
-          to improve its models.
-        </span>
+      <div class="language-row">
+        <label for="language-select">Explain it in</label>
+        <select id="language-select">
+          <option value="Simple English" selected>English (simple words)</option>
+          <option value="Hindi">हिन्दी (Hindi)</option>
+          <option value="Telugu">తెలుగు (Telugu)</option>
+          <option value="Tamil">தமிழ் (Tamil)</option>
+          <option value="Spanish">Español (Spanish)</option>
+        </select>
       </div>
 
-      <div id="status" class="status" hidden></div>
-      <div id="error" class="error-box" hidden></div>
+      <button type="button" id="decode-button" class="primary-button" disabled>Decode this document</button>
 
-      <section id="results" class="results" hidden>
-        <div class="results-header">
-          <div>
-            <p class="eyebrow">YOUR DOCUMENT</p>
-            <h2 id="documentType">Document explained</h2>
-          </div>
+      <button type="button" id="sample-button" class="text-button">Or try a sample document instead →</button>
 
-          <div class="result-actions">
-            <button id="copyButton" class="secondary-button" type="button">
-              Copy results
-            </button>
-            <button id="pdfButton" class="primary-button" type="button">
-              Download as PDF
-            </button>
-          </div>
-        </div>
-
-        <div class="result-section summary-section">
-          <div class="section-heading">
-            <span class="section-number">01</span>
-            <h3>What this document says</h3>
-          </div>
-
-          <div id="summary" class="summary-content"></div>
-        </div>
-
-        <div class="result-section">
-          <div class="section-heading">
-            <span class="section-number">02</span>
-            <h3>What to do next</h3>
-          </div>
-
-          <div id="actionItems" class="action-list"></div>
-        </div>
-
-        <div class="result-section">
-          <div class="section-heading">
-            <span class="section-number">03</span>
-            <h3>Important dates &amp; money</h3>
-          </div>
-
-          <div id="datesMoney" class="dates-grid"></div>
-        </div>
-
-        <div class="result-section">
-          <div class="section-heading">
-            <span class="section-number">04</span>
-            <h3>Worth paying attention to</h3>
-          </div>
-
-          <div id="riskFlags" class="risk-grid"></div>
-        </div>
-
-        <div class="result-section">
-          <div class="section-heading">
-            <span class="section-number">05</span>
-            <h3>In the document vs. in plain words</h3>
-          </div>
-
-          <div id="beforeAfter" class="before-after"></div>
-        </div>
-
-        <div class="result-section">
-          <div class="section-heading">
-            <span class="section-number">06</span>
-            <h3>Terms explained</h3>
-          </div>
-
-          <div id="glossary" class="glossary-grid"></div>
-        </div>
-
-        <div class="result-section">
-          <div class="section-heading">
-            <span class="section-number">07</span>
-            <h3>Questions worth asking</h3>
-          </div>
-
-          <div id="questions" class="questions-list"></div>
-        </div>
-
-        <div class="disclaimer">
-          <strong>One important note:</strong>
-          Plain Terms explains what the document says; it isn't a lawyer,
-          doctor, insurer, or financial adviser. For important decisions,
-          check the original document and confirm details with the appropriate
-          professional.
-        </div>
-      </section>
+      <p class="privacy-note">Nothing is saved by this app. Your document is read once, analyzed, and discarded. It is processed by Google's Gemini AI, which may make mistakes and does not replace advice from a doctor, lawyer, or financial professional. Google's free-tier terms permit them to use this data to improve their models.</p>
     </section>
+
+    <section id="status-section" class="status" hidden aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="status-text">Reading your document…</p>
+    </section>
+
+    <section id="error-section" class="error-panel" hidden aria-live="assertive">
+      <p id="error-text"></p>
+      <button type="button" id="retry-button" class="text-button">Try again</button>
+    </section>
+
+    <section id="results-section" class="results" hidden tabindex="-1" aria-live="polite">
+
+      <div class="result-header">
+        <span id="doc-type-badge" class="doc-type-badge"></span>
+      </div>
+
+      <article class="result-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 2h7l3 3v11H4V2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 8h5M6.5 11h5M6.5 5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>What this document says</h2>
+        <p id="summary-text"></p>
+      </article>
+
+      <article class="result-block" id="action-items-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="7.2" stroke="currentColor" stroke-width="1.3"/></svg>What to do next</h2>
+        <ul id="action-items-list" class="action-items-list"></ul>
+      </article>
+
+      <article class="result-block" id="dates-money-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="2" y="4" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 7.5H16M5.5 2.5V5M12.5 2.5V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Important dates & money</h2>
+        <div id="dates-money-list" class="dates-money-list"></div>
+      </article>
+
+      <article class="result-block" id="risk-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 2L16.5 15H1.5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7.5V10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="13" r="0.9" fill="currentColor"/></svg>Worth paying attention to</h2>
+        <ul id="risk-list" class="risk-list"></ul>
+      </article>
+
+      <article class="result-block" id="before-after-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 5h6M3 9h4M3 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 5l2 2-2 2M12 13l-2-2 2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>In the document vs. in plain words</h2>
+        <div id="before-after-list" class="before-after-list"></div>
+      </article>
+
+      <article class="result-block" id="glossary-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 3.5C3 2.7 3.7 2 4.5 2H14v13H4.5c-.8 0-1.5.7-1.5 1.5V3.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 6.5H11M6 9.5H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Terms explained</h2>
+        <dl id="glossary-list" class="glossary-list"></dl>
+      </article>
+
+      <article class="result-block" id="questions-block">
+        <h2><svg class="block-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6.8 6.9c.2-1 1.1-1.7 2.2-1.7 1.2 0 2.2.9 2.2 2 0 1.6-2.1 1.6-2.1 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="12.7" r="0.9" fill="currentColor"/></svg>Questions worth asking</h2>
+        <ul id="questions-list" class="questions-list"></ul>
+      </article>
+
+      <div class="result-actions">
+        <button type="button" id="copy-button" class="secondary-button">Copy results</button>
+        <button type="button" id="download-button" class="secondary-button">Download as PDF</button>
+      </div>
+
+      <button type="button" id="another-button" class="secondary-button">Decode another document</button>
+
+    </section>
+
   </main>
 
+  <div id="print-container"></div>
+
   <footer class="site-footer">
-    <span>Plain Terms</span>
-    <span>Built by Mohammed Abdul Nayeem</span>
+    <p class="credit">Built by Mohammed Abdul Nayeem</p>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
