@@ -63,28 +63,6 @@ html, body {
   overflow: hidden;
   box-shadow: 0 1px 0 var(--line);
 }
-.masthead::before {
-  content: "";
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(15, 110, 99, 0.14) 0%, rgba(15, 110, 99, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
-.masthead::after {
-  content: "";
-  position: absolute;
-  bottom: -80px;
-  left: 10%;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(15, 110, 99, 0.08) 0%, rgba(15, 110, 99, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
 .masthead-inner {
   max-width: 640px;
   margin: 0 auto;
