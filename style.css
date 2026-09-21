@@ -693,6 +693,14 @@ html, body {
   font-size: 0.76rem;
   opacity: 0.65;
 }
+.footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.footer-link:hover {
+  color: var(--accent);
+}
 
 @media (max-width: 480px) {
   .dropzone { padding: 2rem 1rem; }
