@@ -1,4 +1,3 @@
-// ---- Grab all the page elements we'll need ----
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
 const fileChosen = document.getElementById('file-chosen');
@@ -15,14 +14,11 @@ const retryButton = document.getElementById('retry-button');
 const resultsSection = document.getElementById('results-section');
 const anotherButton = document.getElementById('another-button');
 
-// Vercel's serverless functions reject request bodies over ~4.5MB.
-// We warn the person before they even hit "Decode", instead of letting
-// the request fail silently on the server.
-const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4MB, leaves headroom for base64 overhead
+// Vercel functions reject bodies over ~4.5MB, so we check client-side first
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
 
 const languageSelect = document.getElementById('language-select');
 
-// ---- Dark / light mode ----
 const themeToggle = document.getElementById('theme-toggle');
 const sunIcon = document.getElementById('theme-icon-sun');
 const moonIcon = document.getElementById('theme-icon-moon');
@@ -36,9 +32,7 @@ function applyTheme(theme) {
 function getInitialTheme() {
   const saved = localStorage.getItem('plain-terms-theme');
   if (saved === 'light' || saved === 'dark') return saved;
-  // Always start in light mode unless the person has explicitly chosen dark
-  // with the toggle. We deliberately don't follow system/OS dark-mode
-  // preference here, so the first-time experience is consistent for everyone.
+  // default to light, don't follow OS preference - keeps first load consistent
   return 'light';
 }
 
@@ -51,7 +45,7 @@ themeToggle.addEventListener('click', () => {
   try {
     localStorage.setItem('plain-terms-theme', next);
   } catch (err) {
-    // localStorage can fail in private browsing on some browsers - not critical, theme just won't persist
+    // private browsing etc - theme just won't persist, not a big deal
   }
 });
 
@@ -59,14 +53,11 @@ let selectedFile = null;
 let guessedType = '';
 let lastResult = null;
 
-// ---- Sample document (demo safety net) ----
-// If wifi or the API flakes during a live demo, this button shows a
-// real, fully-worked example instantly, with no network call needed.
+// shows a fully-worked example with no network call - backup if wifi/API flakes during demo
 const sampleButton = document.getElementById('sample-button');
 
-// This sample is a single self-contained fictional letter. Every quote below is verbatim
-// from SAMPLE_SOURCE_TEXT, so the demo output never references something the letter
-// doesn't actually say (a judge can check this by clicking "view sample document").
+// every quote in SAMPLE_RESULT below is copied verbatim from this letter,
+// so the demo output stays consistent with what the letter actually says
 const SAMPLE_SOURCE_TEXT = `Re: Claim #A-48291, Notice of Adjustment
 
 Dear Member,
@@ -121,7 +112,6 @@ sampleButton.addEventListener('click', () => {
   renderResults(SAMPLE_RESULT);
 });
 
-// ---- File selection (click or drag-and-drop) ----
 fileInput.addEventListener('change', (e) => {
   if (e.target.files[0]) setSelectedFile(e.target.files[0]);
 });
@@ -175,7 +165,6 @@ clearFileBtn.addEventListener('click', () => {
   decodeButton.disabled = true;
 });
 
-// ---- Turn the chosen file into base64 (what the API needs) ----
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -190,11 +179,10 @@ function fileToBase64(file) {
   });
 }
 
-// ---- Main action: send the document off to be decoded ----
 decodeButton.addEventListener('click', async () => {
   if (!selectedFile) return;
 
-  decodeButton.disabled = true; // stop a second click while this one is still working
+  decodeButton.disabled = true; // no double-submits
 
   showStatus('Reading your document…');
 
@@ -211,9 +199,8 @@ decodeButton.addEventListener('click', async () => {
       })
     });
 
-    // If /api/analyze doesn't exist (e.g. this page was opened directly
-    // as a file instead of being deployed), response.json() below will
-    // throw because the server sends back an HTML error page, not JSON.
+    // if /api/analyze isn't live (e.g. opened as a local file), this throws
+    // since the server sends back HTML, not JSON
     const result = await response.json();
 
     if (!response.ok) {
@@ -232,7 +219,6 @@ decodeButton.addEventListener('click', async () => {
   }
 });
 
-// ---- Screen switching helpers ----
 function showStatus(message) {
   uploadSection.hidden = true;
   errorSection.hidden = true;
@@ -270,7 +256,6 @@ anotherButton.addEventListener('click', () => {
   uploadSection.hidden = false;
 });
 
-// ---- Render the AI's answer onto the page ----
 function renderResults(data) {
   lastResult = data; // keep a reference for copy/download
   document.getElementById('doc-type-badge').textContent = data.documentType || 'Document';
@@ -284,8 +269,7 @@ function renderResults(data) {
     actionBlock.hidden = false;
     data.actionItems.forEach((item) => {
       const li = document.createElement('li');
-      // Supports both the new {action, evidence} shape and a plain string,
-      // so a stale cached response or the older schema doesn't break the page.
+      // handles both {action, evidence} and plain-string shapes
       const actionText = typeof item === 'string' ? item : item.action;
       const evidence = typeof item === 'string' ? null : item.evidence;
       li.innerHTML = `
@@ -425,7 +409,6 @@ function renderResults(data) {
   showResults();
 }
 
-// ---- Copy / download the results as plain text ----
 function buildPlainTextSummary(data) {
   const lines = [];
   lines.push(`${data.documentType || 'Document'}: Plain Terms summary`, '');
