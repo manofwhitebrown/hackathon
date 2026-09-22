@@ -10,6 +10,16 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="stylesheet" href="style.css">
+<script>
+  // Applied before paint so the page doesn't flash the wrong theme.
+  // Reads the same theme choice saved on the main app page.
+  (function () {
+    try {
+      var saved = localStorage.getItem('plain-terms-theme');
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch (err) { /* localStorage unavailable, fall back to light */ }
+  })();
+</script>
 <style>
   .policy-page { max-width: 640px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
   .policy-page h1 { font-family: var(--serif); font-size: 1.8rem; margin: 0 0 0.3rem; }
