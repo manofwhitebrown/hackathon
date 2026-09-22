@@ -10,6 +10,41 @@ export const config = {
   maxDuration: 30
 };
 
+// ---- Lightweight rate limiting ----
+// This is a best-effort, single-instance guard against someone hammering the
+// endpoint and burning through the Gemini quota right before judging. It is
+// NOT a substitute for a real distributed limiter (Vercel functions can run
+// as multiple cold-started instances, each with its own copy of this map),
+// but it's enough to stop a simple script or a stuck retry loop from wiping
+// out the day's quota. If this matters long-term, move it to Vercel KV
+// or Upstash Redis instead.
+const requestLog = new Map(); // ip -> array of request timestamps (ms)
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 5; // per IP, per window
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const timestamps = (requestLog.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  timestamps.push(now);
+  requestLog.set(ip, timestamps);
+
+  // Keep the map from growing forever across a long-lived instance.
+  if (requestLog.size > 5000) {
+    for (const [key, times] of requestLog) {
+      if (times.every((t) => now - t > RATE_LIMIT_WINDOW_MS)) requestLog.delete(key);
+    }
+  }
+
+  return timestamps.length > RATE_LIMIT_MAX_REQUESTS;
+}
+
+function getClientIp(req) {
+  // Vercel puts the real client IP first in x-forwarded-for.
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.socket?.remoteAddress || 'unknown';
+}
+
 const BASE_PROMPT = `You are helping an ordinary person understand a confusing real-world document
 (this could be a medical result, a legal contract, an insurance letter, or a bill).
 
@@ -136,10 +171,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const clientIp = getClientIp(req);
+  if (isRateLimited(clientIp)) {
+    return res.status(429).json({
+      error: 'Too many documents submitted in a short time. Please wait a minute and try again.'
+    });
+  }
+
   const { data, mimeType, language } = req.body || {};
 
   if (!data || !mimeType) {
     return res.status(400).json({ error: 'No document was received.' });
+  }
+
+  // Belt-and-suspenders: the client already checks 4MB before sending, but
+  // never trust the client. Base64 runs about 4/3 the size of the raw file,
+  // so ~5.4MB of base64 corresponds to the 4MB raw limit.
+  const approxRawBytes = (data.length * 3) / 4;
+  if (approxRawBytes > 4.2 * 1024 * 1024) {
+    return res.status(400).json({ error: 'That file is too large (max 4MB). Try a smaller photo, a compressed scan, or a shorter document.' });
   }
 
   const outputLanguage = language && language !== 'Simple English' ? language : 'English';
