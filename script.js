@@ -36,7 +36,10 @@ function applyTheme(theme) {
 function getInitialTheme() {
   const saved = localStorage.getItem('plain-terms-theme');
   if (saved === 'light' || saved === 'dark') return saved;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  // Always start in light mode unless the person has explicitly chosen dark
+  // with the toggle. We deliberately don't follow system/OS dark-mode
+  // preference here, so the first-time experience is consistent for everyone.
+  return 'light';
 }
 
 applyTheme(getInitialTheme());
