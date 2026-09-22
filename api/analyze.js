@@ -20,7 +20,7 @@ export const config = {
 // or Upstash Redis instead.
 const requestLog = new Map(); // ip -> array of request timestamps (ms)
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 5; // per IP, per window
+const RATE_LIMIT_MAX_REQUESTS = 15; // per IP, per window
 
 function isRateLimited(ip) {
   const now = Date.now();
