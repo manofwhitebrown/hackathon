@@ -1,7 +1,4 @@
-// This file runs on Vercel's servers, not in the browser.
-// It's the only place that ever touches your Gemini API key,
-// so the key is never visible to anyone using the site.
-
+// runs server-side on Vercel - the only place the Gemini key ever touches
 import mammoth from 'mammoth';
 
 // The fallback chain below can take longer than Vercel's default 10s limit
@@ -10,14 +7,9 @@ export const config = {
   maxDuration: 30
 };
 
-// ---- Lightweight rate limiting ----
-// This is a best-effort, single-instance guard against someone hammering the
-// endpoint and burning through the Gemini quota right before judging. It is
-// NOT a substitute for a real distributed limiter (Vercel functions can run
-// as multiple cold-started instances, each with its own copy of this map),
-// but it's enough to stop a simple script or a stuck retry loop from wiping
-// out the day's quota. If this matters long-term, move it to Vercel KV
-// or Upstash Redis instead.
+// best-effort per-instance rate limit - not distributed (Vercel can run
+// multiple cold-started instances), but stops a stuck retry loop from
+// burning the whole Gemini quota. would move to Upstash/KV for real scale.
 const requestLog = new Map(); // ip -> array of request timestamps (ms)
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 15; // per IP, per window
@@ -184,9 +176,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'No document was received.' });
   }
 
-  // Belt-and-suspenders: the client already checks 4MB before sending, but
-  // never trust the client. Base64 runs about 4/3 the size of the raw file,
-  // so ~5.4MB of base64 corresponds to the 4MB raw limit.
+  // never trust the client - recheck size server-side (base64 is ~4/3 raw size)
   const approxRawBytes = (data.length * 3) / 4;
   if (approxRawBytes > 4.2 * 1024 * 1024) {
     return res.status(400).json({ error: 'That file is too large (max 4MB). Try a smaller photo, a compressed scan, or a shorter document.' });
@@ -271,11 +261,8 @@ export default async function handler(req, res) {
 
         const result = await geminiResponse.json();
 
-        // 429 = this specific model's free-tier rate limit is hit right now.
-        // 503 = this model's servers are briefly overloaded.
-        // Either way: a different model has its own separate quota, so
-        // falling through to it is more effective than waiting and retrying
-        // the same one.
+        // 429 = rate limited, 503 = overloaded - either way, a different
+        // model has its own quota so falling through beats waiting
         if (geminiResponse.status === 429 || geminiResponse.status === 503) {
           lastError = result?.error?.message || 'The AI service is busy right now.';
           if (attempt < RETRIES_PER_MODEL) {
@@ -285,17 +272,14 @@ export default async function handler(req, res) {
           break; // give up on this model, fall through to the next one
         }
 
-        // 404 means this specific model name doesn't exist/isn't available
-        // to this API key - no point retrying it, move straight to the next.
+        // 404 = model name not available to this key, skip straight to next
         if (geminiResponse.status === 404) {
           lastError = result?.error?.message || 'Model unavailable.';
           break;
         }
 
         if (!geminiResponse.ok) {
-          // A real error (bad request, auth issue, etc) - not a capacity
-          // problem, so trying other models won't help. Fail immediately
-          // with the real reason instead of wasting time.
+          // not a capacity issue, other models won't help - fail now
           const message = result?.error?.message || 'The AI service returned an error.';
           return res.status(geminiResponse.status).json({ error: message });
         }
