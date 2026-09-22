@@ -7,12 +7,31 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  // Applied before paint so the deck doesn't flash the wrong theme.
+  // Reads the same theme choice saved on the main app page.
+  (function () {
+    try {
+      var saved = localStorage.getItem('plain-terms-theme');
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch (err) { /* localStorage unavailable, fall back to light */ }
+  })();
+</script>
 <style>
 :root {
   --paper: #FAF9F6; --ink: #262B38; --ink-soft: #565D6E; --line: #E2DFD8;
-  --accent: #3D7F73; --accent-soft: #E7F1EF;
+  --accent: #3D7F73; --accent-soft: #E7F1EF; --card-bg: #FFFFFF;
   --risk-high:#B5584C; --risk-high-bg:#FAEDEA; --risk-low:#3D7A5E; --risk-low-bg:#EAF3EE;
   --serif: "Source Serif 4", Georgia, serif; --sans: "Inter", system-ui, sans-serif;
+  --btn-dark: #262B38; --btn-dark-text: #ffffff;
+}
+:root[data-theme="dark"] {
+  --paper: #161A22; --ink: #E6E8ED; --ink-soft: #9BA2B0; --line: #2D3444;
+  --accent: #5FB3A2; --accent-soft: #1E3733; --card-bg: #1E2430;
+  --risk-high:#E0897C; --risk-high-bg:#3A2621; --risk-low:#82C0A0; --risk-low-bg:#1F3428;
+  /* --btn-dark stays fixed rather than following --ink, since --ink flips to a
+     light color in dark mode and this button always needs a dark background
+     with light text, in both themes. */
 }
 * { box-sizing: border-box; }
 html, body { margin:0; padding:0; height:100%; background:var(--paper); color:var(--ink); font-family:var(--sans); overflow:hidden; }
@@ -34,7 +53,7 @@ p.lead { font-size:clamp(1rem, 2vw, 1.2rem); color:var(--ink-soft); line-height:
 .wordmark { font-family:var(--serif); font-size:1.3rem; font-weight:600; }
 .links { display:flex; gap:0.9rem; margin-top:1.8rem; flex-wrap:wrap; }
 .links a { display:inline-block; padding:0.7rem 1.3rem; border-radius:9px; text-decoration:none; font-weight:500; font-size:0.92rem; }
-.links a.primary { background:var(--ink); color:#fff; }
+.links a.primary { background:var(--btn-dark); color:var(--btn-dark-text); }
 .links a.secondary { border:1px solid var(--line); color:var(--ink); }
 
 .title-slide { align-items:center; text-align:left; }
@@ -54,7 +73,7 @@ p.lead { font-size:clamp(1rem, 2vw, 1.2rem); color:var(--ink-soft); line-height:
 .flow-arrow { display:flex; align-items:center; color:var(--line); font-size:1.4rem; padding:0 0.6rem; }
 
 .preview-wrap { display:flex; gap:1.8rem; align-items:flex-start; flex-wrap:wrap; margin-top:1rem; }
-.preview-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.3rem; flex:1; min-width:280px; max-width:400px; }
+.preview-card { background:var(--card-bg); border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.3rem; flex:1; min-width:280px; max-width:400px; }
 .preview-badge { display:inline-block; font-size:0.72rem; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:0.25rem 0.6rem; border-radius:20px; margin-bottom:0.6rem; }
 .preview-card h3 { font-family:var(--serif); font-size:0.95rem; margin:0 0 0.4rem; }
 .preview-card p { font-size:0.85rem; color:var(--ink-soft); margin:0; line-height:1.45; }
@@ -65,11 +84,11 @@ p.lead { font-size:clamp(1rem, 2vw, 1.2rem); color:var(--ink-soft); line-height:
 .ba-mini .plain { color:var(--ink); margin-top:0.2rem; }
 .caption { font-size:0.8rem; color:var(--ink-soft); margin-top:0.9rem; }
 
-.callout { background:#fff; border-left:3px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin:0.8rem 0 1.3rem; max-width:620px; font-size:1.02rem; line-height:1.5; }
+.callout { background:var(--card-bg); border-left:3px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin:0.8rem 0 1.3rem; max-width:620px; font-size:1.02rem; line-height:1.5; }
 
 .footline { position:fixed; bottom:1.1rem; left:0; right:0; text-align:center; color:var(--ink-soft); font-size:0.76rem; }
 .nav { position:fixed; bottom:1rem; right:1.4rem; display:flex; gap:0.5rem; z-index:10; }
-.nav button { width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; font-size:1.05rem; }
+.nav button { width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--card-bg); color:var(--ink); cursor:pointer; font-size:1.05rem; }
 .nav button:hover { border-color:var(--accent); color:var(--accent); }
 .progress { position:fixed; top:0; left:0; height:3px; background:var(--accent); transition:width 0.25s ease; z-index:10; }
 @media (max-width:640px){ .flow{flex-direction:column;} .flow-arrow{transform:rotate(90deg); padding:0.3rem 0;} .title-icon{display:none;} .preview-wrap{flex-direction:column;} }
@@ -176,7 +195,7 @@ p.lead { font-size:clamp(1rem, 2vw, 1.2rem); color:var(--ink-soft); line-height:
         <li><span class="dot"></span>A B2B API for insurers and hospitals, turning fewer confused-customer calls into their cost savings.</li>
       </ul>
       <div class="links">
-        <a class="primary" href="https://hackathon-eight-lilac.vercel.app" target="_blank">Try it live</a>
+        <a class="primary" href="https://hackathon-eight-lilac.vercel.app">Try it live</a>
         <a class="secondary" href="https://github.com/manofwhitebrown/hackathon" target="_blank">View source</a>
       </div>
     </div>
