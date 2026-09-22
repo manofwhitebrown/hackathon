@@ -24,10 +24,10 @@ Then redeploy (adding an env var doesn't apply automatically). After that it sho
 
 Open the browser console (F12) and read the actual error.
 
-- "Server is missing GEMINI_API_KEY" — the key wasn't added, or you didn't redeploy after adding it
-- A model/Gemini error — the app tries three different models automatically if one is busy, so this should be rare. If it still happens, check ai.google.dev/gemini-api/docs/models for current model names
-- "Could not reach the AI service" — you opened index.html directly as a file instead of the deployed URL
-- File too large — 4MB limit, compress the image or use a shorter document
+- "Server is missing GEMINI_API_KEY": the key wasn't added, or you didn't redeploy after adding it
+- A model/Gemini error: the app tries three different models automatically if one is busy, so this should be rare. If it still happens, check ai.google.dev/gemini-api/docs/models for current model names
+- "Could not reach the AI service": you opened index.html directly as a file instead of the deployed URL
+- File too large: 4MB limit, compress the image or use a shorter document
 
 ## Notes
 
