@@ -6,93 +6,73 @@
 <title>Plain Terms — Pitch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --paper:#FAF9F6; --ink:#262B38; --ink-soft:#565D6E; --line:#E2DFD8;
-  --accent:#3D7F73; --accent-soft:#E7F1EF;
-  --risk-high:#B5584C; --risk-high-bg:#FAEDEA;
-  --serif:"Source Serif 4",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+  --paper: #FAF9F6; --ink: #262B38; --ink-soft: #565D6E; --line: #E2DFD8;
+  --accent: #3D7F73; --accent-soft: #E7F1EF;
+  --risk-high:#B5584C; --risk-high-bg:#FAEDEA; --risk-low:#3D7A5E; --risk-low-bg:#EAF3EE;
+  --serif: "Source Serif 4", Georgia, serif; --sans: "Inter", system-ui, sans-serif;
 }
-* { box-sizing:border-box; }
-html,body { margin:0; padding:0; height:100%; background:var(--paper); color:var(--ink); font-family:var(--sans); overflow:hidden; }
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; height:100%; background:var(--paper); color:var(--ink); font-family:var(--sans); overflow:hidden; }
 .deck { position:relative; height:100vh; height:100dvh; width:100%; }
 .slide {
   position:absolute; inset:0; display:none; flex-direction:column; justify-content:center;
-  padding: max(2.2rem, env(safe-area-inset-top)) 3.2rem max(2.6rem, env(safe-area-inset-bottom));
-  max-width:1000px; margin:0 auto; overflow-y:auto;
+  padding: max(2.2rem, env(safe-area-inset-top)) clamp(1.5rem,6vw,4.5rem) max(3.2rem, env(safe-area-inset-bottom));
 }
 .slide.active { display:flex; }
+.inner { max-width: 900px; margin: 0 auto; width:100%; }
 .eyebrow { color:var(--accent); font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:0.7rem; }
-h1 { font-family:var(--serif); font-size:clamp(1.7rem,4.6vw,2.9rem); margin:0 0 0.5rem; line-height:1.14; }
-h2 { font-family:var(--serif); font-size:clamp(1.4rem,3.6vw,2.1rem); margin:0 0 0.9rem; line-height:1.2; }
-p.lead { font-size:clamp(0.95rem,1.9vw,1.15rem); color:var(--ink-soft); line-height:1.55; max-width:620px; }
-.brandmark { display:flex; align-items:center; gap:0.6rem; margin-bottom:1.2rem; }
-.wordmark { font-family:var(--serif); font-size:1.25rem; font-weight:600; }
-
-.s1-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:2.5rem; align-items:center; }
-.s1-example { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.4rem; box-shadow:0 4px 20px rgba(38,43,56,0.06); }
-.s1-tag { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); opacity:0.7; margin-bottom:0.3rem; }
-.s1-original { font-style:italic; color:var(--ink-soft); font-size:0.88rem; padding:0.7rem 0.85rem; background:#F4F2EC; border-radius:8px; margin-bottom:0.7rem; }
-.s1-plain { font-size:0.92rem; padding:0.7rem 0.85rem; background:var(--accent-soft); border-radius:8px; }
-.byline { margin-top:1.6rem; font-size:0.88rem; color:var(--ink-soft); }
-
-.s2-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; }
-.stat { font-family:var(--serif); font-size:clamp(3rem,9vw,5.2rem); color:var(--accent); line-height:1; font-weight:700; }
-.stat-label { font-size:0.95rem; color:var(--ink-soft); margin-top:0.5rem; max-width:280px; }
-
-.s3-grid { display:grid; grid-template-columns:0.9fr 1.1fr; gap:2.2rem; align-items:start; }
-.steps-v { display:flex; flex-direction:column; gap:0.9rem; }
-.step { display:flex; gap:0.7rem; align-items:flex-start; }
-.step .num { display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff; font-weight:700; font-size:0.78rem; flex-shrink:0; }
-.step p { margin:0; font-size:0.92rem; line-height:1.4; }
-.mock { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; box-shadow:0 6px 24px rgba(38,43,56,0.08); font-size:0.8rem; }
-.mock-badge { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.65rem; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:0.2rem 0.55rem; border-radius:20px; margin-bottom:0.6rem; }
-.mock-badge::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--accent); }
-.mock h3 { font-family:var(--serif); font-size:0.85rem; margin:0.7rem 0 0.3rem; border-bottom:1px solid var(--line); padding-bottom:0.25rem; }
-.mock p { margin:0; color:var(--ink-soft); line-height:1.4; }
-.mock-risk { display:flex; gap:0.4rem; align-items:flex-start; padding:0.4rem 0.5rem; background:var(--risk-high-bg); border-left:2px solid var(--risk-high); border-radius:5px; margin-top:0.35rem; font-size:0.75rem; }
-.mock-risk b { color:var(--risk-high); font-size:0.65rem; text-transform:uppercase; }
-
-.compare { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1.3rem; }
-.compare-col { border-radius:14px; padding:1.3rem 1.4rem; }
-.compare-col.generic { background:#fff; border:1px solid var(--line); }
-.compare-col.ours { background:var(--accent-soft); border:1px solid var(--accent); }
-.compare-col h4 { font-family:var(--serif); font-size:1rem; margin:0 0 0.7rem; }
-.compare-col ul { margin:0; padding-left:1.1rem; font-size:0.85rem; line-height:1.6; color:var(--ink-soft); }
-.compare-col.ours ul { color:var(--ink); }
-
-.diagram { display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-top:1.6rem; flex-wrap:wrap; }
-.dbox { background:#fff; border:1px solid var(--line); border-radius:10px; padding:0.8rem 1rem; font-size:0.82rem; text-align:center; min-width:110px; }
-.dbox.accent { border-color:var(--accent); background:var(--accent-soft); }
-.darrow { color:var(--ink-soft); font-size:1.2rem; }
-.dstack { display:flex; flex-direction:column; gap:0.4rem; }
-.dstack .dbox { min-width:130px; font-size:0.72rem; padding:0.5rem 0.7rem; }
-
-.icards { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.4rem; }
-.icard { background:#fff; border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.1rem; }
-.icard .ic { width:34px; height:34px; border-radius:9px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom:0.7rem; }
-.icard h4 { font-family:var(--serif); font-size:0.95rem; margin:0 0 0.35rem; }
-.icard p { font-size:0.82rem; color:var(--ink-soft); margin:0; line-height:1.4; }
-
-.close-wrap { text-align:left; }
-.links { display:flex; gap:1rem; margin-top:1.8rem; flex-wrap:wrap; }
-.links a { display:inline-block; padding:0.8rem 1.5rem; border-radius:9px; text-decoration:none; font-weight:500; font-size:0.95rem; }
+h1 { font-family:var(--serif); font-size:clamp(1.9rem, 5.2vw, 3.2rem); margin:0 0 0.6rem; line-height:1.12; font-weight:600; }
+h2 { font-family:var(--serif); font-size:clamp(1.5rem, 4vw, 2.2rem); margin:0 0 1rem; line-height:1.22; font-weight:600; }
+p.lead { font-size:clamp(1rem, 2vw, 1.2rem); color:var(--ink-soft); line-height:1.55; max-width:600px; }
+.pts { list-style:none; margin:1.3rem 0 0; padding:0; display:flex; flex-direction:column; gap:0.85rem; max-width:620px; }
+.pts li { display:flex; gap:0.7rem; align-items:flex-start; font-size:clamp(0.95rem, 1.8vw, 1.08rem); line-height:1.45; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:0.55em; }
+.brandmark { display:flex; align-items:center; gap:0.65rem; margin-bottom:2rem; }
+.wordmark { font-family:var(--serif); font-size:1.3rem; font-weight:600; }
+.links { display:flex; gap:0.9rem; margin-top:1.8rem; flex-wrap:wrap; }
+.links a { display:inline-block; padding:0.7rem 1.3rem; border-radius:9px; text-decoration:none; font-weight:500; font-size:0.92rem; }
 .links a.primary { background:var(--ink); color:#fff; }
 .links a.secondary { border:1px solid var(--line); color:var(--ink); }
 
-.footline { position:fixed; bottom:1.1rem; left:0; right:0; text-align:center; color:var(--ink-soft); font-size:0.75rem; pointer-events:none; }
-.nav { position:fixed; bottom:1.1rem; right:1.4rem; display:flex; gap:0.5rem; z-index:10; }
+.title-slide { align-items:center; text-align:left; }
+.title-icon { position:absolute; right:clamp(-40px,2vw,40px); top:50%; transform:translateY(-50%); opacity:0.06; pointer-events:none; }
+.title-icon svg { width:min(46vw,420px); height:auto; }
+.by-line { margin-top:1.6rem; font-size:0.9rem; color:var(--ink-soft); }
+.by-line strong { color:var(--ink); }
+
+.stat-row { display:flex; align-items:baseline; gap:1rem; margin:0.5rem 0 1.2rem; flex-wrap:wrap; }
+.big-stat { font-family:var(--serif); font-size:clamp(3rem,9vw,5.5rem); font-weight:700; color:var(--accent); line-height:1; }
+.stat-label { font-size:1rem; color:var(--ink-soft); max-width:260px; line-height:1.4; }
+
+.flow { display:flex; align-items:stretch; gap:0; margin-top:1.6rem; flex-wrap:wrap; }
+.flow-step { flex:1; min-width:150px; padding-right:1.2rem; }
+.flow-step .num { font-family:var(--serif); font-size:1.6rem; font-weight:700; color:var(--accent); }
+.flow-step p { margin:0.4rem 0 0; font-size:0.95rem; line-height:1.4; }
+.flow-arrow { display:flex; align-items:center; color:var(--line); font-size:1.4rem; padding:0 0.6rem; }
+
+.preview-wrap { display:flex; gap:1.8rem; align-items:flex-start; flex-wrap:wrap; margin-top:1rem; }
+.preview-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.3rem; flex:1; min-width:280px; max-width:400px; }
+.preview-badge { display:inline-block; font-size:0.72rem; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:0.25rem 0.6rem; border-radius:20px; margin-bottom:0.6rem; }
+.preview-card h3 { font-family:var(--serif); font-size:0.95rem; margin:0 0 0.4rem; }
+.preview-card p { font-size:0.85rem; color:var(--ink-soft); margin:0; line-height:1.45; }
+.risk-mini { border-left:3px solid var(--risk-high); background:var(--risk-high-bg); padding:0.6rem 0.8rem; border-radius:6px; margin-top:0.7rem; font-size:0.82rem; }
+.risk-mini strong { display:block; font-size:0.85rem; margin-bottom:0.15rem; }
+.ba-mini { font-size:0.82rem; margin-top:0.6rem; }
+.ba-mini .orig { font-style:italic; color:var(--ink-soft); }
+.ba-mini .plain { color:var(--ink); margin-top:0.2rem; }
+.caption { font-size:0.8rem; color:var(--ink-soft); margin-top:0.9rem; }
+
+.callout { background:#fff; border-left:3px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin:0.8rem 0 1.3rem; max-width:620px; font-size:1.02rem; line-height:1.5; }
+
+.footline { position:fixed; bottom:1.1rem; left:0; right:0; text-align:center; color:var(--ink-soft); font-size:0.76rem; }
+.nav { position:fixed; bottom:1rem; right:1.4rem; display:flex; gap:0.5rem; z-index:10; }
 .nav button { width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; font-size:1.05rem; }
 .nav button:hover { border-color:var(--accent); color:var(--accent); }
 .progress { position:fixed; top:0; left:0; height:3px; background:var(--accent); transition:width 0.25s ease; z-index:10; }
-
-@media (max-width:720px){
-  .s1-grid,.s2-grid,.s3-grid,.compare,.icards { grid-template-columns:1fr; }
-  .slide { padding:1.8rem 1.4rem 2.4rem; }
-  .diagram { flex-direction:column; }
-  .darrow { transform:rotate(90deg); }
-}
+@media (max-width:640px){ .flow{flex-direction:column;} .flow-arrow{transform:rotate(90deg); padding:0.3rem 0;} .title-icon{display:none;} .preview-wrap{flex-direction:column;} }
 </style>
 </head>
 <body>
@@ -100,139 +80,104 @@ p.lead { font-size:clamp(0.95rem,1.9vw,1.15rem); color:var(--ink-soft); line-hei
 <div class="progress" id="progress"></div>
 <div class="deck" id="deck">
 
-  <section class="slide active">
-    <div class="s1-grid">
-      <div>
-        <div class="brandmark">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="5" y="3" width="20" height="24" rx="2.5" stroke="#3D7F73" stroke-width="2"/><path d="M10 10H20M10 15H20M10 20H15" stroke="#3D7F73" stroke-width="2" stroke-linecap="round"/></svg>
-          <span class="wordmark">Plain Terms</span>
-        </div>
-        <h1>Confusing documents, explained in plain language.</h1>
-        <p class="lead">Medical bills, insurance letters, contracts. Read in seconds, in whichever language you're actually comfortable in.</p>
-        <p class="byline">Open Build Week Hackathon 2026 &nbsp;·&nbsp; Built solo by Mohammed Abdul Nayeem</p>
-      </div>
-      <div class="s1-example">
-        <div class="s1-tag">What it actually does</div>
-        <div class="s1-original">"This claim has been adjudicated as not medically necessary per plan guidelines."</div>
-        <div class="s1-plain">Your insurer decided you didn't need this treatment, using their own rules, and won't pay for it.</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide">
-    <div class="s2-grid">
-      <div>
-        <div class="stat">60,000+</div>
-        <div class="stat-label">crores lost in India every year to friction like this. Confusing documents are part of a much bigger, ongoing cost.</div>
-      </div>
-      <div>
-        <div class="eyebrow">The Problem</div>
-        <h2>Nobody teaches you to read a denial letter.</h2>
-        <p class="lead">Medical bills, insurance letters, and contracts are written for professionals, not for the person holding them. Missed deadlines and misread fees aren't a small inconvenience, they have real financial and health consequences. It hits hardest for people with less formal education and people more comfortable in a language other than English.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide">
-    <div class="s3-grid">
-      <div>
-        <div class="eyebrow">The Solution</div>
-        <h2>Upload it. Get it explained.</h2>
-        <div class="steps-v">
-          <div class="step"><span class="num">1</span><p>Upload a photo, PDF, or Word doc.</p></div>
-          <div class="step"><span class="num">2</span><p>We pull out what actually matters, and tie every claim back to the document.</p></div>
-          <div class="step"><span class="num">3</span><p>Get a summary, glossary, risk flags, and questions to ask, in English, Hindi, Telugu, Tamil, or Spanish.</p></div>
-        </div>
-      </div>
-      <div class="mock">
-        <span class="mock-badge">Insurance letter</span>
-        <h3>What this document says</h3>
-        <p>Your insurer is denying part of a claim. You have 60 days to appeal before you lose that right.</p>
-        <div class="mock-risk"><span style="font-size:0.7rem">●</span><span><b>High · Clearly stated</b><br>60-day appeal deadline</span></div>
-        <h3>Questions worth asking</h3>
-        <p>"What exact date is 60 days from today?" — ask your Insurer</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide">
-    <div class="eyebrow">What Makes It Different</div>
-    <h2>Any AI can summarize a document. That was never the hard part.</h2>
-    <p class="lead">The hard part is that the person who needs this most doesn't know how to ask a chatbot the right way.</p>
-    <div class="compare">
-      <div class="compare-col generic">
-        <h4>A generic AI chatbot</h4>
-        <ul>
-          <li>Needs a well-written prompt to give a useful answer</li>
-          <li>Gives whatever it feels like, different every time</li>
-          <li>One flat paragraph, in whatever language you typed in</li>
-          <li>No distinction between fact and guess</li>
-        </ul>
-      </div>
-      <div class="compare-col ours">
-        <h4>Plain Terms</h4>
-        <ul>
-          <li>Upload a photo. That's the entire skill required</li>
-          <li>Same structured breakdown, every single time</li>
-          <li>A language dropdown, not a prompting skill</li>
-          <li>Labels what's stated versus what's inferred</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide">
-    <div class="eyebrow">Built To Actually Work</div>
-    <h2>Reliability, not just a demo.</h2>
-    <p class="lead">If the AI is briefly overloaded, the request quietly falls through to a different model instead of failing in front of a judge.</p>
-    <div class="diagram">
-      <div class="dbox">Browser</div>
-      <div class="darrow">→</div>
-      <div class="dbox accent">Serverless function<br><span style="font-size:0.68rem;color:var(--ink-soft)">holds the API key</span></div>
-      <div class="darrow">→</div>
-      <div class="dstack">
-        <div class="dbox">Model 1, busy?</div>
-        <div class="dbox">Model 2, busy?</div>
-        <div class="dbox">Model 3</div>
-      </div>
-      <div class="darrow">→</div>
-      <div class="dbox">Structured result</div>
-    </div>
-  </section>
-
-  <section class="slide">
-    <div class="eyebrow">Beyond The Hackathon</div>
-    <h2>Where this actually goes next.</h2>
-    <div class="icards">
-      <div class="icard">
-        <div class="ic"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 16s6-4.5 6-9a6 6 0 1 0-12 0c0 4.5 6 9 6 9z" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="7" r="2" stroke="currentColor" stroke-width="1.5"/></svg></div>
-        <h4>A WhatsApp version</h4>
-        <p>The people this is built for are already there. Send a photo, get a voice note back.</p>
-      </div>
-      <div class="icard">
-        <div class="ic"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v14M4 6v6M14 6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <h4>Voice output</h4>
-        <p>Some people can listen far more easily than they can read, even in their own language.</p>
-      </div>
-      <div class="icard">
-        <div class="ic"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 7h14" stroke="currentColor" stroke-width="1.5"/></svg></div>
-        <h4>A B2B API</h4>
-        <p>Insurers and hospitals already pay for fewer confused-customer calls. That's a real budget line.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide">
-    <div class="close-wrap">
+  <section class="slide active title-slide">
+    <div class="title-icon"><svg viewBox="0 0 30 30" fill="none"><rect x="5" y="3" width="20" height="24" rx="2.5" stroke="#3D7F73" stroke-width="1.4"/><path d="M10 10H20M10 15H20M10 20H15" stroke="#3D7F73" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    <div class="inner">
       <div class="brandmark">
         <svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="5" y="3" width="20" height="24" rx="2.5" stroke="#3D7F73" stroke-width="2"/><path d="M10 10H20M10 15H20M10 20H15" stroke="#3D7F73" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="wordmark">Plain Terms</span>
       </div>
-      <h2>It's live. Try it now.</h2>
-      <p class="lead">Not a mockup, not slides only, the real thing, working right now.</p>
+      <h1>Confusing documents, explained in plain language, in your own language.</h1>
+      <p class="lead">A medical bill, an insurance letter, a contract. Upload it, and get back exactly what it says, what to watch out for, and what to ask next.</p>
+      <div class="by-line">Built solo by <strong>Mohammed Abdul Nayeem</strong> — Open Build Week Hackathon 2026</div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow">The Problem</div>
+      <div class="stat-row">
+        <div class="big-stat">150,000+</div>
+        <div class="stat-label">people, every day, get handed a document that decides real money, health, or legal outcomes in their life.</div>
+      </div>
+      <p class="lead">Medical bills, insurance denial letters, contracts, written in language most people were never taught to read. Missed deadlines and misread fees aren't a small inconvenience, they're the actual cost. It hits hardest for people with less formal education and people more comfortable in a language other than English.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow">The Solution</div>
+      <h2>Upload it. Get it explained.</h2>
+      <div class="flow">
+        <div class="flow-step"><div class="num">01</div><p>Upload a photo, PDF, or Word doc of any confusing document.</p></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step"><div class="num">02</div><p>AI reads it and pulls out what actually matters.</p></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step"><div class="num">03</div><p>Get it back in English, Hindi, Telugu, Tamil, or Spanish.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow">See It In Action</div>
+      <h2>This is a real result, not a mockup.</h2>
+      <div class="preview-wrap">
+        <div class="preview-card">
+          <span class="preview-badge">Insurance letter</span>
+          <h3>What this document says</h3>
+          <p>Your insurer is denying part of a recent claim because they say the procedure was "not medically necessary." You have 60 days to appeal.</p>
+          <div class="risk-mini"><strong>High — 60-day appeal deadline</strong>Miss this date and you permanently lose the right to appeal directly.</div>
+        </div>
+        <div class="preview-card">
+          <h3>In the document vs. in plain words</h3>
+          <div class="ba-mini">
+            <div class="orig">"This claim has been adjudicated as not medically necessary per plan guidelines."</div>
+            <div class="plain">→ Your insurer decided you didn't need this treatment, based on their own rules, and won't pay for it.</div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Pulled directly from the live app's actual output. Not a template, not a screenshot mockup.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow">What Makes It Different</div>
+      <h2>Any AI can summarize a document.</h2>
+      <div class="callout">Ours is built for the person who wouldn't know to ask for one. No prompting skill required, no picking through a chatbot, just an upload button.</div>
+      <ul class="pts">
+        <li><span class="dot"></span>Structured output every time: risk flags, dates, actions, questions, not one flat paragraph.</li>
+        <li><span class="dot"></span>Labels what the document clearly states versus what's being interpreted, so trust isn't just assumed.</li>
+        <li><span class="dot"></span>A language dropdown does what typing "explain this in Telugu" would require someone to already know to ask for.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow">Built To Actually Work</div>
+      <h2>Reliability was the hard part, not the AI.</h2>
+      <ul class="pts">
+        <li><span class="dot"></span>A three-model fallback chain, so one AI provider being busy doesn't take the whole thing down.</li>
+        <li><span class="dot"></span>Screen-reader support and keyboard navigation, tested, not assumed.</li>
+        <li><span class="dot"></span>One-click PDF export that renders correctly in every supported language.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow">Beyond The Hackathon</div>
+      <h2>Where this actually goes next.</h2>
+      <ul class="pts">
+        <li><span class="dot"></span>A WhatsApp version. The people this is built for are already there, not browsing websites.</li>
+        <li><span class="dot"></span>Voice output, so literacy itself stops being the barrier.</li>
+        <li><span class="dot"></span>A B2B API for insurers and hospitals, turning fewer confused-customer calls into their cost savings.</li>
+      </ul>
       <div class="links">
-        <a class="primary" href="https://hackathon-eight-lilac.vercel.app" target="_blank">Open the live app</a>
-        <a class="secondary" href="https://github.com/manofwhitebrown/hackathon" target="_blank">View the code</a>
+        <a class="primary" href="https://hackathon-eight-lilac.vercel.app" target="_blank">Try it live</a>
+        <a class="secondary" href="https://github.com/manofwhitebrown/hackathon" target="_blank">View source</a>
       </div>
     </div>
   </section>
@@ -249,22 +194,22 @@ p.lead { font-size:clamp(0.95rem,1.9vw,1.15rem); color:var(--ink-soft); line-hei
 const slides = document.querySelectorAll('.slide');
 let idx = 0;
 function render() {
-  slides.forEach((s,i) => s.classList.toggle('active', i===idx));
-  document.getElementById('progress').style.width = ((idx+1)/slides.length*100)+'%';
-  document.getElementById('footline').textContent = (idx+1)+' / '+slides.length;
+  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.getElementById('progress').style.width = ((idx + 1) / slides.length * 100) + '%';
+  document.getElementById('footline').textContent = (idx + 1) + ' / ' + slides.length;
 }
-document.getElementById('nextBtn').addEventListener('click', () => { idx=Math.min(idx+1,slides.length-1); render(); });
-document.getElementById('prevBtn').addEventListener('click', () => { idx=Math.max(idx-1,0); render(); });
+document.getElementById('nextBtn').addEventListener('click', () => { idx = Math.min(idx + 1, slides.length - 1); render(); });
+document.getElementById('prevBtn').addEventListener('click', () => { idx = Math.max(idx - 1, 0); render(); });
 document.addEventListener('keydown', (e) => {
-  if (e.key==='ArrowRight') { idx=Math.min(idx+1,slides.length-1); render(); }
-  if (e.key==='ArrowLeft') { idx=Math.max(idx-1,0); render(); }
+  if (e.key === 'ArrowRight') { idx = Math.min(idx + 1, slides.length - 1); render(); }
+  if (e.key === 'ArrowLeft') { idx = Math.max(idx - 1, 0); render(); }
 });
-let touchStartX=0;
-document.addEventListener('touchstart', (e) => { touchStartX=e.touches[0].clientX; });
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
 document.addEventListener('touchend', (e) => {
   const dx = e.changedTouches[0].clientX - touchStartX;
-  if (dx<-50) { idx=Math.min(idx+1,slides.length-1); render(); }
-  if (dx>50) { idx=Math.max(idx-1,0); render(); }
+  if (dx < -50) { idx = Math.min(idx + 1, slides.length - 1); render(); }
+  if (dx > 50) { idx = Math.max(idx - 1, 0); render(); }
 });
 render();
 </script>
