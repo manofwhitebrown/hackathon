@@ -442,7 +442,7 @@ function buildPlainTextSummary(data) {
     lines.push('QUESTIONS WORTH ASKING');
     data.questionsToAsk.forEach((q) => {
       const questionText = typeof q === 'string' ? q : q.question;
-      const askWho = typeof q === 'string' ? '' : ` (ask your ${q.askWho})`;
+      const askWho = typeof q === 'string' ? '' : ` (${askWhoPhrase(q.askWho)})`;
       lines.push(`- ${questionText}${askWho}`);
     });
   }
@@ -577,4 +577,13 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str || '';
   return div.innerHTML;
+}
+
+// Turns the askWho category into a natural phrase for sentence contexts like
+// "(ask your doctor)". "Other" is a deliberate catch-all in the AI's schema for
+// questions that don't fit the four named roles (e.g. a repair shop, a landlord,
+// a school) - it needs its own phrasing so it doesn't read as "ask your Other".
+function askWhoPhrase(askWho) {
+  const known = { Doctor: 'ask your doctor', Lawyer: 'ask your lawyer', Insurer: 'ask your insurer', Biller: 'ask your biller' };
+  return known[askWho] || 'ask a relevant professional';
 }
