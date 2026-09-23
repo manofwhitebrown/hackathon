@@ -55,6 +55,9 @@ in the document - do not paraphrase it) that the claim is based on. If you canno
 to support a claim, do not make that claim. Never invent dates, amounts, deadlines, fees, diagnoses,
 rights, or obligations that are not actually in the document.
 
+If the document contains a reference number useful for contacting the sender about it (a claim
+number, account number, or case number), mention it plainly near the start of the summary.
+
 Read the attached document and respond with:
 
 1. documentType: a short label for what kind of document this is (e.g. "Medical result", "Insurance letter", "Legal contract", "Bill").
