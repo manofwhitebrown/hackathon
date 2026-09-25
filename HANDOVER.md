@@ -26,6 +26,6 @@ both held up fine.
 
 ## Watch out for
 - The rate limiter in api/analyze.js is in-memory, per instance — a best-effort
-  guard, not a real distributed limiter. Fine for hackathon scale, not prod.
+  guard, not a real distributed limiter. Only for hackathon scale, not prod.
 - Gemini's free tier allows training on submitted content. It's disclosed on the
   privacy page, but worth remembering before demoing with a real personal doc.
