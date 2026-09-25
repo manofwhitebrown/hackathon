@@ -1,6 +1,6 @@
 # Plain Terms
 
-![Plain Terms — a confusing insurance letter explained in plain language, with risk flags and deadlines called out](plain-terms-screenshot.png)
+![Plain Terms: a confusing insurance letter explained in plain language, with risk flags and deadlines called out](plain-terms-screenshot.png)
 
 Plain Terms reads confusing documents (medical bills, insurance letters, contracts) and explains them in plain language...
 
