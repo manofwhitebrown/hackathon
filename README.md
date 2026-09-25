@@ -2,9 +2,7 @@
 
 ![Plain Terms: a confusing insurance letter explained in plain language, with risk flags and deadlines called out](plain-terms-screenshot.png)
 
-Plain Terms reads confusing documents (medical bills, insurance letters, contracts) and explains them in plain language...
-
-# Plain Terms
+**Live app:** https://hackathon-eight-lilac.vercel.app
 
 Plain Terms reads confusing documents (medical bills, insurance letters, contracts) and explains them in plain language. Upload a photo, PDF, Word doc, or text file, and it gives you a summary, a glossary, risk flags, action items, and questions to ask, in English or a few other languages.
 
