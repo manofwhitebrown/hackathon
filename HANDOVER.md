@@ -1,6 +1,6 @@
 # Handover
 
-Last update: Sept 25, 2026 (tested everything,verified)
+Last update: Sept 26, 2026 (tested everything,verified)
 
 ## Where things stand
 Core flow works end to end — upload, Gemini analysis, then summary/glossary/risk
